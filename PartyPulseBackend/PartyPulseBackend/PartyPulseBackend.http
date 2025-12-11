@@ -1,0 +1,6 @@
+@PartyPulseBackend_HostAddress = http://localhost:5074
+
+GET {{PartyPulseBackend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
