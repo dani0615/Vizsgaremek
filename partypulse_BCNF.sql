@@ -44,7 +44,7 @@ CREATE TABLE Events (
     Title         VARCHAR(255) NOT NULL,
     Description   TEXT,
     EventDateTime DATETIME NOT NULL,
-    Location      POINT SRID 4326 NOT NULL,           -- pl. POINT(19.0402 47.4979)
+    Location      POINT NOT NULL,           -- pl. POINT(19.0402 47.4979)
     LocationName  VARCHAR(255),                        -- pl. "Campus Fesztivál"
     Address       VARCHAR(255),
     TicketPrice   DECIMAL(10,2) DEFAULT 0,
@@ -84,18 +84,18 @@ CREATE TABLE Matches (
     MatchID     INT AUTO_INCREMENT PRIMARY KEY,
     User1ID     INT NOT NULL,
     User2ID     INT NOT NULL,
-    User1Liked  BOOLEAN DEFAULT TRUE,     -- Tinder: egyik like-olja a másikat
-    User2Liked  BOOLEAN NULL,            -- NULL = még nem döntött, TRUE = match!
-    MatchedAt   TIMESTAMP NULL,           -- csak akkor töltődik, ha kölcsönös
-    ChatRoomID  CHAR(36) UNIQUE NULL,     -- UUID csak match esetén generálódik
+    User1Liked  BOOLEAN DEFAULT TRUE,     
+    User2Liked  BOOLEAN NULL,            
+    MatchedAt   TIMESTAMP NULL,           
+    ChatRoomID  CHAR(36) UNIQUE NULL,     
 
     UNIQUE KEY uq_pair (User1ID, User2ID),
     FOREIGN KEY (User1ID) REFERENCES Users(UserID) ON DELETE CASCADE,
     FOREIGN KEY (User2ID) REFERENCES Users(UserID) ON DELETE CASCADE,
     CHECK (User1ID < User2ID)
-) ENGINE=InnoDB;
+) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
--- ===========================================================================
+
 -- 6. Chat üzenetek 
 -- ===========================================================================
 CREATE TABLE ChatMessages (
@@ -108,14 +108,10 @@ CREATE TABLE ChatMessages (
 
     FOREIGN KEY (RoomID) REFERENCES Matches(ChatRoomID) ON DELETE CASCADE,
     FOREIGN KEY (SenderID) REFERENCES Users(UserID) ON DELETE CASCADE,
-    INDEX idx_room_time (RoomID, SentAt DESC)
-) ENGINE=InnoDB
-PARTITION BY RANGE (YEAR(SentAt)) (
-    PARTITION p2025 VALUES LESS THAN (2026),
-    PARTITION p2026 VALUES LESS THAN (2027),
-    PARTITION p2027 VALUES LESS THAN (2028),
-    PARTITION p_future VALUES LESS THAN MAXVALUE
-);
+    INDEX idx_room_time (RoomID, SentAt DESC),
+    INDEX idx_sender (SenderID),
+    INDEX idx_sentat (SentAt)
+) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- ===========================================================================
 -- 7. Ranglisták 
