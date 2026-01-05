@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PartyPulseBackend")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4cc1d0faef40aa1f06962ae0f34daec33cb45fc7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c849d98ebcaf3673809f3211b0959d14673604de")]
 [assembly: System.Reflection.AssemblyProductAttribute("PartyPulseBackend")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PartyPulseBackend")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
