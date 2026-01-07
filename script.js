@@ -12,3 +12,29 @@ function showPage(pageId) {
     document.getElementById(pageId).classList.add('active');
     window.scrollTo(0,0);
 }
+function renderEvents(data, containerId) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
+    
+    if(data.length === 0) {
+        container.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">No events found in BAZ County for this selection.</p>';
+        return;
+    }
+
+    data.forEach(event => {
+        const card = `
+            <div class="event-card">
+                <div class="event-img" style="background: url('${event.img}'); background-size: cover;">
+                    <span class="event-date-tag">${event.date}</span>
+                </div>
+                <div class="event-info">
+                    <h3>${event.name}</h3>
+                    <p><i class="fas fa-map-marker-alt" style="color:var(--accent)"></i> ${event.city}</p>
+                    <p style="margin: 10px 0; font-size: 0.9rem; opacity: 0.8;">${event.desc}</p>
+                    <button class="btn-neon" onclick="rsvp(${event.id})">RSVP Now</button>
+                </div>
+            </div>
+        `;
+        container.innerHTML += card;
+    });
+}
