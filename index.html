@@ -38,5 +38,30 @@
                 </div>
         </div>
     </section>
+    <section id="events" class="page">
+        <div class="container">
+            <h2 class="section-title">Search Events</h2>
+            <div class="filter-bar">
+                <input type="text" id="search-input" placeholder="Keyword (e.g. Techno)...">
+                <select id="city-filter">
+                    <option value="">All Cities</option>
+                    <option value="Miskolc">Miskolc</option>
+                    <option value="Ózd">Ózd</option>
+                    <option value="Mezőkövesd">Mezőkövesd</option>
+                    <option value="Szerencs">Szerencs</option>
+                </select>
+                <input type="date" id="date-filter">
+                <button class="btn-neon" onclick="filterEvents()">Filter</button>
+            </div>
+            
+            <div class="map-placeholder">
+                <i class="fas fa-map-marked-alt"></i>
+                <p>Interactive BAZ County Map Loading...</p>
+            </div>
+
+            <div class="event-grid" id="all-events-list">
+                </div>
+        </div>
+    </section>
 </body>
 </html>
