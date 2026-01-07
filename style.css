@@ -150,3 +150,12 @@ body {
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     border: 1px dashed var(--accent); margin-bottom: 2rem;
 }
+.map-placeholder i { font-size: 3rem; color: var(--accent); margin-bottom: 1rem; }
+
+.auth-container { display: flex; justify-content: center; align-items: center; height: 70vh; }
+.auth-box { background: var(--card-bg); padding: 3rem; border-radius: 15px; width: 400px; }
+.auth-box input { width: 100%; padding: 1rem; margin-bottom: 1rem; background: rgba(255,255,255,0.05); border: 1px solid #444; color: white; border-radius: 5px; }
+
+footer { background: #050510; padding: 4rem 5% 1rem; border-top: 1px solid #222; margin-top: 4rem; }
+.footer-content { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 2rem; }
+.footer-bottom { text-align: center; margin-top: 3rem; opacity: 0.5; font-size: 0.8rem; }
