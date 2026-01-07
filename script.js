@@ -70,3 +70,12 @@ function handleAuth(e) {
     alert("Welcome to Party Pulse! You are now logged in.");
     showPage('home');
 }
+function rsvp(id) {
+    alert("RSVP Successful! See you in BAZ County!");
+}
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    renderEvents(events.slice(0, 3), 'featured-events');
+    renderEvents(events, 'all-events-list');
+});
