@@ -89,6 +89,6 @@ namespace PartyPulseBackend.Controllers
                 return Ok($"Sikeres regisztráció, de az email küldése sikertelen volt. Hiba: {ex.Message}");
             }
         }
-        
+         //TODO ConfirmRegistry, implementálni a regisztráció megerősítését
     }
 }
