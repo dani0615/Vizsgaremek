@@ -86,5 +86,19 @@
             </div>
         </div>
     </section>
+    <section id="login" class="page">
+        <div class="auth-container">
+            <div class="auth-box">
+                <h2 id="auth-title">Welcome Back</h2>
+                <form id="auth-form" onsubmit="handleAuth(event)">
+                    <input type="email" placeholder="Email" required>
+                    <input type="password" placeholder="Password" required>
+                    <button type="submit" class="btn-pulse">Login</button>
+                </form>
+                <p onclick="toggleAuthMode()" id="auth-toggle-text">Don't have an account? Register here.</p>
+            </div>
+        </div>
+    </section>
+
 </body>
 </html>
