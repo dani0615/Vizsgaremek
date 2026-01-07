@@ -89,6 +89,33 @@ namespace PartyPulseBackend.Controllers
                 return Ok($"Sikeres regisztráció, de az email küldése sikertelen volt. Hiba: {ex.Message}");
             }
         }
-         //TODO ConfirmRegistry, implementálni a regisztráció megerősítését
+        [HttpGet]
+        public async Task<IActionResult> ConfirmRegistry(string felhasznalonev, string email)
+        {
+            try
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == felhasznalonev && u.Email == email);
+
+                if (user == null)
+                    return BadRequest("Érvénytelen adatok.");
+
+                if ((bool)user.IsActive)
+                    return Ok("A fiók már korábban aktiválva lett.");
+
+                
+                user.IsActive = true;
+                user.IsVerified = true;
+                user.Role = "user"; 
+
+                _context.Users.Update(user);
+                await _context.SaveChangesAsync();
+
+                return Ok("Sikeres regisztráció megerősítés. Most már bejelentkezhet!");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
