@@ -5,3 +5,4 @@
 /.vs
 /PartyPulseBackend/.vs/PartyPulseBackend
 /PartyPulseBackend/PartyPulseBackend/appsettings.json
+/PartyPulseBackend/PartyPulseBackend/bin/Debug/net8.0/appsettings.json
