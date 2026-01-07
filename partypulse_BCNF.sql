@@ -4,6 +4,7 @@ CREATE TABLE Users (
     UserID            INT AUTO_INCREMENT PRIMARY KEY,
     Username          VARCHAR(50) UNIQUE NOT NULL,
     Email             VARCHAR(255) UNIQUE NOT NULL,
+    Role              ENUM('user', 'organizer', 'admin') DEFAULT 'user' NOT NULL,
     DisplayName       VARCHAR(100),
     Bio               TEXT,
     ProfilePicture    LONGBLOB NULL,                    -- Bináris kép (max ~4-8 MB)
@@ -45,7 +46,7 @@ CREATE TABLE Events (
     Description   TEXT,
     EventDateTime DATETIME NOT NULL,
     Location      POINT NOT NULL,           -- pl. POINT(19.0402 47.4979)
-    LocationName  VARCHAR(255),                        -- pl. "Campus Fesztivál"
+    LocationName  VARCHAR(255),                        
     Address       VARCHAR(255),
     TicketPrice   DECIMAL(10,2) DEFAULT 0,
     OrganizerID   INT NOT NULL,
@@ -68,7 +69,7 @@ CREATE TABLE Attendances (
     UserID       INT NOT NULL,
     EventID      INT NOT NULL,
     RegisteredAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CheckInTime  TIMESTAMP NULL,               -- NULL = még nem check-elt be
+    CheckInTime  TIMESTAMP NULL,               
     PointsEarned INT DEFAULT 0,
     Status       ENUM('going', 'checked_in', 'no_show') DEFAULT 'going',
 
