@@ -1,118 +1,151 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hu">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Party Pulse - Discover the best parties and festivals in Borsod-Abaúj-Zemplén county.">
-    <title>Party Pulse | BAZ County Events</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <meta name="description" content="Party Pulse - Fedezd fel Borsod-Abaúj-Zemplén megye legjobb bulijait, klubjait és fesztiváljait!">
+    <meta name="keywords" content="BAZ megye, Miskolc, buli, fesztivál, Party Pulse, Borsod">
+    <title>Party Pulse | BAZ Megyei Bulik</title>
+    
+    <link rel="stylesheet" href="teszt.css">
+    
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+
     <nav class="navbar">
-        <div class="logo">PARTY<span>PULSE</span></div>
-        <ul class="nav-links">
-            <li><a href="#" onclick="showPage('home')">Home</a></li>
-            <li><a href="#" onclick="showPage('events')">Events</a></li>
-            <li><a href="#" onclick="showPage('ranking')">Ranking</a></li>
-            <li id="auth-link"><a href="#" onclick="showPage('login')" class="btn-neon">Login</a></li>
+        <div class="logo" onclick="showPage('home')">PARTY<span>PULSE</span></div>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="#" onclick="showPage('home')">Kezdőlap</a></li>
+            <li><a href="#" onclick="showPage('events')">Bulik</a></li>
+            <li><a href="#" onclick="showPage('ranking')">Ranglista</a></li>
+            <li><a href="#" onclick="showPage('login')" class="btn-neon-outline">Belépés</a></li>
         </ul>
-        <div class="menu-toggle" onclick="toggleMenu()"><i class="fas fa-bars"></i></div>
-    </nav>
-    <section id="home" class="page active">
-        <div class="hero">
-            <div class="hero-content">
-                <h1>Find the Best Parties in <span class="text-gradient">BAZ County</span></h1>
-                <p>Miskolc, Ózd, Mezőkövesd and more! Don't miss the beat.</p>
-                <div class="quick-search">
-                    <input type="text" id="hero-search" placeholder="Search by city or keyword...">
-                    <button onclick="quickSearch()">Go <i class="fas fa-bolt"></i></button>
-                </div>
-            </div>
+        <div class="menu-toggle" onclick="toggleMobileMenu()">
+            <i class="fas fa-bars"></i>
         </div>
-        
+    </nav>
+
+    <main id="home" class="page active">
+        <section class="hero">
+            <h1><span class="text-gradient">Party Pulse</span></h1>
+            <p>Találd meg a legjobb bulikat BAZ megyében!</p>
+            <div class="search-box">
+                <input type="text" id="quick-search-input" placeholder="Miskolc, Ózd, Mezőkövesd...">
+                <button class="btn-pulse" onclick="quickSearch()">Keresés</button>
+            </div>
+        </section>
+
         <div class="container">
-            <h2 class="section-title">Featured Events <i class="fas fa-fire"></i></h2>
+            <h2 class="section-title">Kiemelt Események <i class="fas fa-fire" style="color: #ff00de;"></i></h2>
             <div class="event-grid" id="featured-events">
                 </div>
         </div>
-    </section>
+    </main>
+
     <section id="events" class="page">
         <div class="container">
-            <h2 class="section-title">Search Events</h2>
-            <div class="filter-bar">
-                <input type="text" id="search-input" placeholder="Keyword (e.g. Techno)...">
-                <select id="city-filter">
-                    <option value="">All Cities</option>
-                    <option value="Miskolc">Miskolc</option>
-                    <option value="Ózd">Ózd</option>
-                    <option value="Mezőkövesd">Mezőkövesd</option>
-                    <option value="Szerencs">Szerencs</option>
-                </select>
-                <input type="date" id="date-filter">
-                <button class="btn-neon" onclick="filterEvents()">Filter</button>
-            </div>
+            <h2 class="section-title">Bulik Keresése</h2>
             
-            <div class="map-placeholder">
-                <i class="fas fa-map-marked-alt"></i>
-                <p>Interactive BAZ County Map Loading...</p>
+            <div class="filters">
+                <input type="text" id="filter-keyword" placeholder="Kulcsszó (pl. Techno)..." oninput="filterEvents()">
+                <select id="filter-city" onchange="filterEvents()">
+                    <option value="">Összes Város</option>
+                    <option value="Miskolc">Miskolc</option>
+                    <option value="Mezőkövesd">Mezőkövesd</option>
+                    <option value="Ózd">Ózd</option>
+                    <option value="Sárospatak">Sárospatak</option>
+                    <option value="Kazincbarcika">Kazincbarcika</option>
+                </select>
+                <input type="date" id="filter-date" onchange="filterEvents()">
+                <select id="filter-type" onchange="filterEvents()">
+                    <option value="">Összes Típus</option>
+                    <option value="Club Night">Club Night</option>
+                    <option value="Fesztivál">Fesztivál</option>
+                    <option value="Koncert">Koncert</option>
+                </select>
+            </div>
+
+            <div id="map-placeholder" class="map-placeholder">
+                <p><i class="fas fa-map-marked-alt"></i> Térkép betöltése (BAZ Megye)...</p>
             </div>
 
             <div class="event-grid" id="all-events-list">
                 </div>
         </div>
     </section>
+
     <section id="ranking" class="page">
         <div class="container">
             <div class="ranking-card">
-                <h2><i class="fas fa-crown"></i> Party Legends</h2>
-                <p>Top attendees in BAZ this month.</p>
-                <table class="ranking-table">
+                <h2 style="color: #bc13fe;"><i class="fas fa-crown"></i> Party Legendák</h2>
+                <p>Top felhasználók az aktivitásuk alapján.</p>
+                <table>
                     <thead>
                         <tr>
-                            <th>Rank</th>
-                            <th>User</th>
-                            <th>Events Attended</th>
-                            <th>Points</th>
+                            <th>Helyezés</th>
+                            <th>Felhasználó</th>
+                            <th>Bulik</th>
+                            <th>Pontszám</th>
                         </tr>
                     </thead>
-                    <tbody id="ranking-body">
-                        <tr><td>1</td><td>BazMaster99</td><td>14</td><td>1200</td></tr>
-                        <tr><td>2</td><td>MiskolcQueen</td><td>11</td><td>950</td></tr>
-                        <tr><td>3</td><td>TechnoVibes</td><td>9</td><td>800</td></tr>
+                    <tbody>
+                        <tr><td>1.</td><td><strong>BorsodiBetyár</strong></td><td>14</td><td>2800</td></tr>
+                        <tr><td>2.</td><td>TechnoKirálynő</td><td>11</td><td>2100</td></tr>
+                        <tr><td>3.</td><td>AvasiSrác</td><td>9</td><td>1600</td></tr>
+                        <tr><td>4.</td><td>ZemplénVibes</td><td>7</td><td>1200</td></tr>
+                        <tr><td>5.</td><td>NightOwl_Ózd</td><td>6</td><td>1000</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
     </section>
+
     <section id="login" class="page">
         <div class="auth-container">
             <div class="auth-box">
-                <h2 id="auth-title">Welcome Back</h2>
-                <form id="auth-form" onsubmit="handleAuth(event)">
-                    <input type="email" placeholder="Email" required>
-                    <input type="password" placeholder="Password" required>
-                    <button type="submit" class="btn-pulse">Login</button>
+                <h2 id="auth-title">Bejelentkezés</h2>
+                <form onsubmit="handleAuth(event)">
+                    <div id="register-fields" style="display: none;">
+                        <input type="text" placeholder="Felhasználónév" id="reg-username">
+                    </div>
+                    <input type="email" placeholder="Email cím" id="auth-email" required>
+                    <input type="password" placeholder="Jelszó" id="auth-pass" required>
+                    <button type="submit" class="btn-pulse" id="auth-btn">Belépés</button>
                 </form>
-                <p onclick="toggleAuthMode()" id="auth-toggle-text">Don't have an account? Register here.</p>
+                <p class="toggle-text" onclick="toggleAuth()">Nincs fiókod? Regisztrálj!</p>
+                <p class="forgot-text" onclick="alert('Jelszó emlékeztető elküldve!')">Elfelejtetted a jelszavad?</p>
             </div>
         </div>
     </section>
+
     <footer>
-        <div class="footer-content">
+        <div class="footer-grid">
             <div class="footer-section">
                 <h3>Party Pulse</h3>
-                <p>The #1 event aggregator for Northern Hungary.</p>
+                <p>A #1 eseménykereső Borsod-Abaúj-Zemplén megyében.</p>
             </div>
-            <div class="footer-links">
-                <a href="#">About Us</a>
-                <a href="#">Contact</a>
-                <a href="#">Privacy Policy</a>
+            <div class="footer-section">
+                <h4>Linkek</h4>
+                <ul>
+                    <li><a href="#">Rólunk</a></li>
+                    <li><a href="#">Kapcsolat</a></li>
+                    <li><a href="#">Adatvédelem</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Social</h4>
+                <div class="social-icons">
+                    <i class="fab fa-instagram"></i>
+                    <i class="fab fa-facebook"></i>
+                    <i class="fab fa-tiktok"></i>
+                </div>
             </div>
         </div>
-        <div class="footer-bottom">&copy; 2026 Party Pulse BAZ. All rights reserved.</div>
+        <div class="footer-bottom">&copy; 2026 Party Pulse BAZ. Minden jog fenntartva.</div>
     </footer>
+
     <script src="script.js"></script>
 </body>
 </html>
