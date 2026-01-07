@@ -1,0 +1,32 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+# .NET / Visual Studio
+bin/
+obj/
+*.user
+*.suo
+*.userprefs
+*.csproj.user
+*.sln.docstates
+*.cache
+*.vs/
+.vs/
+.idea/
+
+# Visual Studio / Rider / VS Code
+.vscode/
+.idea/
+
+# Érzékeny fájlok – NE commitold soha!
+appsettings*.json
+secrets.json
+*.pfx
+*.cer
+*.key
+
+# Build artifactok
+[Pp]ublish/
+xunit*.xml
+TestResults/
