@@ -97,3 +97,47 @@ body {
     cursor: pointer;
     font-weight: bold;
 }
+.event-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 2rem 0;
+}
+
+.event-card {
+    background: var(--card-bg);
+    border-radius: 15px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.1);
+    transition: 0.3s;
+}
+
+.event-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--accent);
+    box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
+}
+
+.event-img { height: 200px; background: #222; position: relative; }
+.event-date-tag {
+    position: absolute; top: 10px; left: 10px;
+    background: var(--secondary); padding: 5px 10px; border-radius: 5px; font-size: 0.8rem;
+}
+
+.event-info { padding: 1.5rem; }
+.btn-neon {
+    background: transparent; border: 2px solid var(--primary); color: white;
+    padding: 0.6rem 1.2rem; border-radius: 5px; cursor: pointer; transition: 0.3s;
+}
+.btn-neon:hover { background: var(--primary); box-shadow: 0 0 15px var(--primary); }
+
+.btn-pulse {
+    background: var(--primary); color: white; border: none; padding: 1rem;
+    width: 100%; border-radius: 5px; cursor: pointer; animation: pulse 2s infinite;
+}
+
+
+.page { display: none; padding-top: 2rem; min-height: 80vh; }
+.active { display: block; animation: fadeIn 0.5s ease; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
