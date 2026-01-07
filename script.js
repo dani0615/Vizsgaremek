@@ -38,3 +38,23 @@ function renderEvents(data, containerId) {
         container.innerHTML += card;
     });
 }
+function filterEvents() {
+    const keyword = document.getElementById('search-input').value.toLowerCase();
+    const city = document.getElementById('city-filter').value;
+    const date = document.getElementById('date-filter').value;
+
+    const filtered = events.filter(e => {
+        return (e.name.toLowerCase().includes(keyword) || e.desc.toLowerCase().includes(keyword)) &&
+               (city === "" || e.city === city) &&
+               (date === "" || e.date === date);
+    });
+
+    renderEvents(filtered, 'all-events-list');
+}
+
+function quickSearch() {
+    const query = document.getElementById('hero-search').value;
+    document.getElementById('search-input').value = query;
+    showPage('events');
+    filterEvents();
+}
