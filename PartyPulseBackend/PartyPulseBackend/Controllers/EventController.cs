@@ -7,6 +7,12 @@ namespace PartyPulseBackend.Controllers
     [ApiController]
     public class EventController : ControllerBase
     {
+        private readonly PartyPulseContext_context;
+
+        public EventController(PartyPulseContext context)
+        {
+            _context = context;
+        }
         [HttpGet("AllEvents")]
         public IActionResult GetAllEvents()
         {
