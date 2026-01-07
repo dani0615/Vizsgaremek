@@ -1,0 +1,22 @@
+:root {
+    --primary: #bc13fe; 
+    --secondary: #ff00de; 
+    --accent: #00f3ff; 
+    --bg: #0b0b1a;
+    --card-bg: rgba(255, 255, 255, 0.05);
+    --text: #ffffff;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
