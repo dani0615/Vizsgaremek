@@ -58,3 +58,15 @@ function quickSearch() {
     showPage('events');
     filterEvents();
 }
+let isLoginMode = true;
+function toggleAuthMode() {
+    isLoginMode = !isLoginMode;
+    document.getElementById('auth-title').innerText = isLoginMode ? "Welcome Back" : "Join the Pulse";
+    document.getElementById('auth-toggle-text').innerText = isLoginMode ? "Don't have an account? Register here." : "Already have an account? Login.";
+}
+
+function handleAuth(e) {
+    e.preventDefault();
+    alert("Welcome to Party Pulse! You are now logged in.");
+    showPage('home');
+}
