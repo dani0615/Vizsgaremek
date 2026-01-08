@@ -36,3 +36,4 @@ secrets.json
 [Pp]ublish/
 xunit*.xml
 TestResults/
+/PartyPulseBackend/PartyPulseBackend/obj
