@@ -30,7 +30,7 @@ CREATE TABLE Users (
 -- ===========================================================================
 CREATE TABLE PasswordSalts (
     UserID       INT PRIMARY KEY,
-    Salt         CHAR(32) NOT NULL,        -- 16 byte random salt → 32 hex karakter
+    Salt         CHAR(64) NOT NULL,        -- 16 byte random salt → 32 hex karakter
     PasswordHash CHAR(64) NOT NULL,        -- SHA256(salt + password) → 64 hex
     CreatedAt    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     
@@ -164,4 +164,5 @@ CREATE TABLE Reviews (
     UNIQUE KEY uq_one_review_per_user (UserID, EventID),
     FOREIGN KEY (EventID) REFERENCES Events(EventID) ON DELETE CASCADE,
     FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE
+
 ) ENGINE=InnoDB;
