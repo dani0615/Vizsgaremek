@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PartyPulseBackend.Data;
+using PartyPulseBackend.DTOs;
 
 namespace PartyPulseBackend.Controllers
 {
@@ -33,11 +34,19 @@ namespace PartyPulseBackend.Controllers
                         PartyCount =r.User.Attendances.Count()
                     })
                     .ToListAsync();
+                var leaderboard=rawData.Select((item,index)=>new LeaderboardDTO
+                {
+                    Rank=index+1,
+                    UserName=item.UserName,
+                    PartyCount=item.PartyCount,
+                    Score =item.Score
+                }).ToList();
+                return Ok(leaderboard);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
-                throw;
+                return BadRequest($"Hiba:{ex.Message}");
             }
         }
     }
