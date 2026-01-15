@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PartyPulseBackend.Data;
 
 namespace PartyPulseBackend.Controllers
@@ -16,5 +17,28 @@ namespace PartyPulseBackend.Controllers
         }
 
         [HttpGet("TopList")]
+        public async Task<IActionResult> GetTopList([FromQuery] string type = "all_time", [FromQuery] int count = 20)
+        {
+            try
+            {
+                if (count > 100) count = 100;
+                var rawData=await _context.Rankings
+                    .Where(r=>r.RankType==type)
+                    .OrderByDescending(r=>r.Score)
+                    .Take(count)
+                    .Select(r => new
+                    {
+                        UserName=r.User.DisplayName??"Névtelen",
+                        Score=r.Score,
+                        PartyCount =r.User.Attendances.Count()
+                    })
+                    .ToListAsync();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }
