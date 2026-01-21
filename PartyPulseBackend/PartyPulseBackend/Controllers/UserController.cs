@@ -58,5 +58,20 @@ namespace PartyPulseBackend.Controllers
             return Ok("Profil sikeresen frissítve.");
 
         }
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDTO model)
+        {
+            var userId = GetUserId();
+            var user = await _context.Users.Include(u=>u.Passwordsalt).FirstOrDefaultAsync(u=>u.UserId==userId);
+
+            if (user == null || user.Passwordsalt==null) return NotFound();
+
+            string oldHash=Program.CreateSHA256(model.OldPassword+user.Passwordsalt.Salt);
+            if(oldHash != user.Passwordsalt.PasswordHash)
+            {
+                return BadRequest("A jelenlegi jelszó hibás");
+            }
+
+        }
     }
 }
