@@ -105,5 +105,16 @@ namespace PartyPulseBackend.Controllers
             return Ok(new {url=$"/api/User/avatar/{userId}"});
 
         }
+        [AllowAnonymous]
+        [HttpGet("avatar/{id}")]
+        public async Task<IActionResult> GetAvatar(int id)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null || user.ProfilePicture == null)
+            {
+                return NotFound();
+            }
+            return File(user.ProfilePicture, user.ProfilePictureMime ?? "image/jpeg");
+        }
     }
 }
