@@ -78,6 +78,16 @@ namespace PartyPulseBackend
                 };
             });
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("PartyPulsePolicy", policy =>
+                {
+                    policy.AllowAnyOrigin()   
+                          .AllowAnyMethod()   
+                          .AllowAnyHeader();  
+                });
+            });
+
 
             var app = builder.Build();
 
@@ -87,7 +97,7 @@ namespace PartyPulseBackend
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
+            app.UseCors("PartyPulsePolicy");
             app.UseHttpsRedirection();
 
             app.UseAuthentication();
