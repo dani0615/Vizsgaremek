@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PartyPulseBackend.Data;
 using PartyPulseBackend.DTOs;
+using System.Security.Claims;
 
 namespace PartyPulseBackend.Controllers
 {
@@ -16,6 +17,8 @@ namespace PartyPulseBackend.Controllers
         {
             _context = context;
         }
+        private int GetUserId()=>int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
         [HttpGet("me")]
         public async Task<IActionResult> GetMyProfile()
         {
