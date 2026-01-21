@@ -71,7 +71,13 @@ namespace PartyPulseBackend.Controllers
             {
                 return BadRequest("A jelenlegi jelszó hibás");
             }
+            string newSalt = Program.GenerateSalt();
+            user.Passwordsalt.Salt = newSalt;
+            user.Passwordsalt.PasswordHash = Program.CreateSHA256(model.NewPassword + newSalt);
+            user.UpdatedAt = DateTime.Now;
 
+            await _context.SaveChangesAsync();
+            return Ok("Jelszó sikeresen megváltoztatva.");
         }
     }
 }
