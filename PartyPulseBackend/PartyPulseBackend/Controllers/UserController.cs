@@ -79,5 +79,31 @@ namespace PartyPulseBackend.Controllers
             await _context.SaveChangesAsync();
             return Ok("Jelszó sikeresen megváltoztatva.");
         }
+        [HttpPost("avatar")]
+        public async Task<IActionResult> UploadAvatar(IFormFile file)
+        {
+          if(file==null|| file.Length == 0) return BadRequest("Nincs kiválasztva fájl.");
+
+          var allowedTypes=new[] { "image/jpeg", "image/png", "image/gif" };
+            if(!allowedTypes.Contains(file.ContentType))
+            {
+                return BadRequest("Csak JPEG, PNG és GIF fájlok engedélyezettek.");
+            }
+
+            var userId = GetUserId();
+            var user = await _context.Users.FindAsync(userId);
+            if(user == null) return NotFound();
+
+            using(var memorySteam= new MemoryStream())
+            {
+                await file.CopyToAsync(memorySteam);
+                user.ProfilePicture = memorySteam.ToArray();
+                user.ProfilePictureMime = file.ContentType;
+                user.UpdatedAt = DateTime.Now;
+            }
+            await _context.SaveChangesAsync();
+            return Ok(new {url=$"/api/User/avatar/{userId}"});
+
+        }
     }
 }
