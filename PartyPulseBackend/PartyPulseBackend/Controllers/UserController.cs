@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PartyPulseBackend.Data;
 using PartyPulseBackend.DTOs;
 using System.Security.Claims;
@@ -36,6 +37,26 @@ namespace PartyPulseBackend.Controllers
                 ProfilePictureUrl =user.ProfilePicture != null ? $"/api/User/avatar/{userId}":null
             };
             return Ok(profile);
+        }
+        [HttpPut("profile")]
+        public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDTO model)
+        {
+            var userId = GetUserId();
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null) return NotFound();
+
+            if(user.Email != model.Email && await _context.Users.AnyAsync(u=>u.Email==model.Email))
+            {
+              return BadRequest("Ez az email cím már használatban van.");
+            }
+            user.Email = model.Email;
+            user.DisplayName = model.DisplayName;
+            user.Bio = model.Bio;
+            user.UpdatedAt = DateTime.Now;
+
+            await _context.SaveChangesAsync();
+            return Ok("Profil sikeresen frissítve.");
+
         }
     }
 }
