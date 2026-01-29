@@ -27,7 +27,7 @@ namespace PartyPulseBackend.Controllers
         {
            
             var user = await _context.Users
-                .Include(u => u.Passwordsalt)
+                .Include(u => u.passwordsalt)
                 .FirstOrDefaultAsync(u => u.Email == loginModel.Email);
 
             if (user == null)
@@ -38,10 +38,10 @@ namespace PartyPulseBackend.Controllers
                 return BadRequest("Kérjük, előbb erősítse meg az email címét!");
 
           
-            string salt = user.Passwordsalt!.Salt;
+            string salt = user.passwordsalt!.Salt;
             string computedHash = Program.CreateSHA256(loginModel.Password + salt);
 
-            if (computedHash != user.Passwordsalt.PasswordHash)
+            if (computedHash != user.passwordsalt.PasswordHash)
                 return Unauthorized("Hibás email cím vagy jelszó.");
 
           
@@ -55,7 +55,7 @@ namespace PartyPulseBackend.Controllers
             });
         }
 
-        private string GenerateJwtToken(Models.User user)
+        private string GenerateJwtToken(Models.user user)
         {
             var jwtSettings = _config.GetSection("JwtSettings");
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]!));
@@ -63,7 +63,7 @@ namespace PartyPulseBackend.Controllers
 
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
+                new Claim(ClaimTypes.NameIdentifier, user.UserID.ToString()),
                 new Claim(ClaimTypes.Name, user.Username),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Role, user.Role)

@@ -23,7 +23,7 @@ namespace PartyPulseBackend.Controllers
         [HttpPost]
         public async Task<IActionResult> Registry([FromBody] UserRegistrationDTO regModel)
         {
-            User newUser; 
+            user newUser; 
 
             using (var transaction = await _context.Database.BeginTransactionAsync())
             {
@@ -35,7 +35,7 @@ namespace PartyPulseBackend.Controllers
                     if (await _context.Users.AnyAsync(u => u.Email == regModel.Email))
                         return BadRequest("Email cím már foglalt.");
 
-                    newUser = new User
+                    newUser = new user
                     {
                         Username = regModel.Username,
                         Email = regModel.Email,
@@ -53,9 +53,9 @@ namespace PartyPulseBackend.Controllers
                     string salt = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 32);
                     string passwordHash = Program.CreateSHA256(regModel.Password + salt);
 
-                    var passwordEntry = new Passwordsalt
+                    var passwordEntry = new passwordsalt
                     {
-                        UserId = newUser.UserId,
+                        UserID = newUser.UserID,
                         Salt = salt,
                         PasswordHash = passwordHash,
                         CreatedAt = DateTime.Now

@@ -62,18 +62,18 @@ namespace PartyPulseBackend.Controllers
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDTO model)
         {
             var userId = GetUserId();
-            var user = await _context.Users.Include(u=>u.Passwordsalt).FirstOrDefaultAsync(u=>u.UserId==userId);
+            var user = await _context.Users.Include(u=>u.passwordsalt).FirstOrDefaultAsync(u=>u.UserID==userId);
 
-            if (user == null || user.Passwordsalt==null) return NotFound();
+            if (user == null || user.passwordsalt==null) return NotFound();
 
-            string oldHash=Program.CreateSHA256(model.OldPassword+user.Passwordsalt.Salt);
-            if(oldHash != user.Passwordsalt.PasswordHash)
+            string oldHash=Program.CreateSHA256(model.OldPassword+user.passwordsalt.Salt);
+            if(oldHash != user.passwordsalt.PasswordHash)
             {
                 return BadRequest("A jelenlegi jelszó hibás");
             }
             string newSalt = Program.GenerateSalt();
-            user.Passwordsalt.Salt = newSalt;
-            user.Passwordsalt.PasswordHash = Program.CreateSHA256(model.NewPassword + newSalt);
+            user.passwordsalt.Salt = newSalt;
+            user.passwordsalt.PasswordHash = Program.CreateSHA256(model.NewPassword + newSalt);
             user.UpdatedAt = DateTime.Now;
 
             await _context.SaveChangesAsync();

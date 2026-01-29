@@ -31,7 +31,7 @@ namespace PartyPulseBackend.Controllers
                     {
                         UserName=r.User.DisplayName??"Névtelen",
                         Score=r.Score,
-                        PartyCount =r.User.Attendances.Count()
+                        PartyCount =r.User.attendances.Count()
                     })
                     .ToListAsync();
                 var leaderboard=rawData.Select((item,index)=>new LeaderboardDTO
