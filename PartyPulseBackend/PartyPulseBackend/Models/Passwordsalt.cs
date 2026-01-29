@@ -6,14 +6,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PartyPulseBackend.Models;
 
-[Table("passwordsalts")]
-public partial class Passwordsalt
+public partial class passwordsalt
 {
     [Key]
-    [Column("UserID", TypeName = "int(11)")]
-    public int UserId { get; set; }
+    [Column(TypeName = "int(11)")]
+    public int UserID { get; set; }
 
-    [StringLength(32)]
+    [StringLength(64)]
     public string Salt { get; set; } = null!;
 
     [StringLength(64)]
@@ -22,7 +21,7 @@ public partial class Passwordsalt
     [Column(TypeName = "timestamp")]
     public DateTime CreatedAt { get; set; }
 
-    [ForeignKey("UserId")]
-    [InverseProperty("Passwordsalt")]
-    public virtual User User { get; set; } = null!;
+    [ForeignKey("UserID")]
+    [InverseProperty("passwordsalt")]
+    public virtual user User { get; set; } = null!;
 }

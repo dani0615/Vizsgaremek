@@ -6,14 +6,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PartyPulseBackend.Models;
 
-[PrimaryKey("RankType", "Period", "Score", "UserId")]
-[Table("rankings")]
-[Index("UserId", Name = "UserID")]
-public partial class Ranking
+[PrimaryKey("RankType", "Period", "Score", "UserID")]
+[Index("UserID", Name = "UserID")]
+public partial class ranking
 {
     [Key]
-    [Column("UserID", TypeName = "int(11)")]
-    public int UserId { get; set; }
+    [Column(TypeName = "int(11)")]
+    public int UserID { get; set; }
 
     [Key]
     [Column(TypeName = "enum('all_time','monthly')")]
@@ -30,7 +29,7 @@ public partial class Ranking
     [Column(TypeName = "int(11)")]
     public int? RankPos { get; set; }
 
-    [ForeignKey("UserId")]
-    [InverseProperty("Rankings")]
-    public virtual User User { get; set; } = null!;
+    [ForeignKey("UserID")]
+    [InverseProperty("rankings")]
+    public virtual user User { get; set; } = null!;
 }

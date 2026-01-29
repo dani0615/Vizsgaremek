@@ -6,13 +6,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PartyPulseBackend.Models;
 
-[Table("badges")]
 [Index("Name", Name = "Name", IsUnique = true)]
-public partial class Badge
+public partial class badge
 {
     [Key]
-    [Column("BadgeID", TypeName = "int(11)")]
-    public int BadgeId { get; set; }
+    [Column(TypeName = "int(11)")]
+    public int BadgeID { get; set; }
 
     [StringLength(100)]
     public string Name { get; set; } = null!;
@@ -28,5 +27,5 @@ public partial class Badge
     public bool? IsActive { get; set; }
 
     [InverseProperty("Badge")]
-    public virtual ICollection<Userbadge> Userbadges { get; set; } = new List<Userbadge>();
+    public virtual ICollection<userbadge> userbadges { get; set; } = new List<userbadge>();
 }

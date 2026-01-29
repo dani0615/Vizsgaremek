@@ -97,6 +97,7 @@ namespace PartyPulseBackend
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+            app.UseStaticFiles();
             app.UseCors("PartyPulsePolicy");
             app.UseHttpsRedirection();
 
@@ -125,7 +126,6 @@ namespace PartyPulseBackend
             }
 
         }
-
         public static string GenerateSalt()
         {
             Random random = new Random();

@@ -6,18 +6,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PartyPulseBackend.Models;
 
-[Table("users")]
 [Index("Email", Name = "Email", IsUnique = true)]
 [Index("Username", Name = "Username", IsUnique = true)]
 [Index("Email", Name = "idx_email")]
 [Index("LastActive", Name = "idx_lastactive")]
 [Index("Points", Name = "idx_points")]
 [Index("Username", Name = "idx_username")]
-public partial class User
+public partial class user
 {
     [Key]
-    [Column("UserID", TypeName = "int(11)")]
-    public int UserId { get; set; }
+    [Column(TypeName = "int(11)")]
+    public int UserID { get; set; }
 
     [StringLength(50)]
     public string Username { get; set; } = null!;
@@ -64,29 +63,32 @@ public partial class User
     public DateTime UpdatedAt { get; set; }
 
     [InverseProperty("User")]
-    public virtual ICollection<Attendance> Attendances { get; set; } = new List<Attendance>();
+    public virtual ICollection<attendance> attendances { get; set; } = new List<attendance>();
 
     [InverseProperty("Sender")]
-    public virtual ICollection<Chatmessage> Chatmessages { get; set; } = new List<Chatmessage>();
+    public virtual ICollection<chatmessage> chatmessages { get; set; } = new List<chatmessage>();
+
+    [InverseProperty("User")]
+    public virtual ICollection<eventfavorite> eventfavorites { get; set; } = new List<eventfavorite>();
 
     [InverseProperty("Organizer")]
-    public virtual ICollection<Event> Events { get; set; } = new List<Event>();
+    public virtual ICollection<@event> events { get; set; } = new List<@event>();
 
     [InverseProperty("User1")]
-    public virtual ICollection<Match> MatchUser1s { get; set; } = new List<Match>();
+    public virtual ICollection<match> matchUser1s { get; set; } = new List<match>();
 
     [InverseProperty("User2")]
-    public virtual ICollection<Match> MatchUser2s { get; set; } = new List<Match>();
+    public virtual ICollection<match> matchUser2s { get; set; } = new List<match>();
 
     [InverseProperty("User")]
-    public virtual Passwordsalt? Passwordsalt { get; set; }
+    public virtual passwordsalt? passwordsalt { get; set; }
 
     [InverseProperty("User")]
-    public virtual ICollection<Ranking> Rankings { get; set; } = new List<Ranking>();
+    public virtual ICollection<ranking> rankings { get; set; } = new List<ranking>();
 
     [InverseProperty("User")]
-    public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
+    public virtual ICollection<review> reviews { get; set; } = new List<review>();
 
     [InverseProperty("User")]
-    public virtual ICollection<Userbadge> Userbadges { get; set; } = new List<Userbadge>();
+    public virtual ICollection<userbadge> userbadges { get; set; } = new List<userbadge>();
 }

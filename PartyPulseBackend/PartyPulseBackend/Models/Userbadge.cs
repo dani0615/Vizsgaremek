@@ -6,27 +6,26 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PartyPulseBackend.Models;
 
-[PrimaryKey("UserId", "BadgeId")]
-[Table("userbadges")]
-[Index("BadgeId", Name = "BadgeID")]
-public partial class Userbadge
+[PrimaryKey("UserID", "BadgeID")]
+[Index("BadgeID", Name = "BadgeID")]
+public partial class userbadge
 {
     [Key]
-    [Column("UserID", TypeName = "int(11)")]
-    public int UserId { get; set; }
+    [Column(TypeName = "int(11)")]
+    public int UserID { get; set; }
 
     [Key]
-    [Column("BadgeID", TypeName = "int(11)")]
-    public int BadgeId { get; set; }
+    [Column(TypeName = "int(11)")]
+    public int BadgeID { get; set; }
 
     [Column(TypeName = "timestamp")]
     public DateTime AwardedAt { get; set; }
 
-    [ForeignKey("BadgeId")]
-    [InverseProperty("Userbadges")]
-    public virtual Badge Badge { get; set; } = null!;
+    [ForeignKey("BadgeID")]
+    [InverseProperty("userbadges")]
+    public virtual badge Badge { get; set; } = null!;
 
-    [ForeignKey("UserId")]
-    [InverseProperty("Userbadges")]
-    public virtual User User { get; set; } = null!;
+    [ForeignKey("UserID")]
+    [InverseProperty("userbadges")]
+    public virtual user User { get; set; } = null!;
 }

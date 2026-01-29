@@ -6,21 +6,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PartyPulseBackend.Models;
 
-[Table("chatmessages")]
-[Index("RoomId", "SentAt", Name = "idx_room_time")]
-[Index("SenderId", Name = "idx_sender")]
+[Index("RoomID", "SentAt", Name = "idx_room_time")]
+[Index("SenderID", Name = "idx_sender")]
 [Index("SentAt", Name = "idx_sentat")]
-public partial class Chatmessage
+public partial class chatmessage
 {
     [Key]
-    [Column("MessageID", TypeName = "bigint(20)")]
-    public long MessageId { get; set; }
+    [Column(TypeName = "bigint(20)")]
+    public long MessageID { get; set; }
 
-    [Column("RoomID")]
-    public Guid RoomId { get; set; }
+    public Guid RoomID { get; set; }
 
-    [Column("SenderID", TypeName = "int(11)")]
-    public int SenderId { get; set; }
+    [Column(TypeName = "int(11)")]
+    public int SenderID { get; set; }
 
     [Column(TypeName = "text")]
     public string Message { get; set; } = null!;
@@ -30,11 +28,11 @@ public partial class Chatmessage
 
     public bool? IsRead { get; set; }
 
-    [ForeignKey("RoomId")]
-    [InverseProperty("Chatmessages")]
-    public virtual Match Room { get; set; } = null!;
+    [ForeignKey("RoomID")]
+    [InverseProperty("chatmessages")]
+    public virtual match Room { get; set; } = null!;
 
-    [ForeignKey("SenderId")]
-    [InverseProperty("Chatmessages")]
-    public virtual User Sender { get; set; } = null!;
+    [ForeignKey("SenderID")]
+    [InverseProperty("chatmessages")]
+    public virtual user Sender { get; set; } = null!;
 }

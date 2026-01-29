@@ -6,21 +6,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PartyPulseBackend.Models;
 
-[Table("matches")]
-[Index("ChatRoomId", Name = "ChatRoomID", IsUnique = true)]
-[Index("User2Id", Name = "User2ID")]
-[Index("User1Id", "User2Id", Name = "uq_pair", IsUnique = true)]
-public partial class Match
+[Index("ChatRoomID", Name = "ChatRoomID", IsUnique = true)]
+[Index("User2ID", Name = "User2ID")]
+[Index("User1ID", "User2ID", Name = "uq_pair", IsUnique = true)]
+public partial class match
 {
     [Key]
-    [Column("MatchID", TypeName = "int(11)")]
-    public int MatchId { get; set; }
+    [Column(TypeName = "int(11)")]
+    public int MatchID { get; set; }
 
-    [Column("User1ID", TypeName = "int(11)")]
-    public int User1Id { get; set; }
+    [Column(TypeName = "int(11)")]
+    public int User1ID { get; set; }
 
-    [Column("User2ID", TypeName = "int(11)")]
-    public int User2Id { get; set; }
+    [Column(TypeName = "int(11)")]
+    public int User2ID { get; set; }
 
     public bool? User1Liked { get; set; }
 
@@ -30,17 +29,16 @@ public partial class Match
     public DateTime? MatchedAt { get; set; }
 
     [Required]
-    [Column("ChatRoomID")]
-    public Guid? ChatRoomId { get; set; }
+    public Guid? ChatRoomID { get; set; }
+
+    [ForeignKey("User1ID")]
+    [InverseProperty("matchUser1s")]
+    public virtual user User1 { get; set; } = null!;
+
+    [ForeignKey("User2ID")]
+    [InverseProperty("matchUser2s")]
+    public virtual user User2 { get; set; } = null!;
 
     [InverseProperty("Room")]
-    public virtual ICollection<Chatmessage> Chatmessages { get; set; } = new List<Chatmessage>();
-
-    [ForeignKey("User1Id")]
-    [InverseProperty("MatchUser1s")]
-    public virtual User User1 { get; set; } = null!;
-
-    [ForeignKey("User2Id")]
-    [InverseProperty("MatchUser2s")]
-    public virtual User User2 { get; set; } = null!;
+    public virtual ICollection<chatmessage> chatmessages { get; set; } = new List<chatmessage>();
 }

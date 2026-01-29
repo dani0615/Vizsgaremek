@@ -6,29 +6,27 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PartyPulseBackend.Models;
 
-public partial class review
+[PrimaryKey("UserID", "EventID")]
+[Index("EventID", Name = "idx_event")]
+[Index("UserID", Name = "idx_user")]
+public partial class eventfavorite
 {
     [Key]
     [Column(TypeName = "int(11)")]
-    public int ReviewID { get; set; }
+    public int UserID { get; set; }
 
-    [Column(TypeName = "text")]
-    public string? Comment { get; set; }
+    [Key]
+    [Column(TypeName = "int(11)")]
+    public int EventID { get; set; }
 
     [Column(TypeName = "timestamp")]
     public DateTime CreatedAt { get; set; }
 
-    [Column(TypeName = "int(11)")]
-    public int UserID { get; set; }
-
-    [Column(TypeName = "int(11)")]
-    public int EventID { get; set; }
-
     [ForeignKey("EventID")]
-    [InverseProperty("reviews")]
+    [InverseProperty("eventfavorites")]
     public virtual @event Event { get; set; } = null!;
 
     [ForeignKey("UserID")]
-    [InverseProperty("reviews")]
+    [InverseProperty("eventfavorites")]
     public virtual user User { get; set; } = null!;
 }

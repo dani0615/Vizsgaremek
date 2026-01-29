@@ -6,18 +6,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PartyPulseBackend.Models;
 
-[PrimaryKey("UserId", "EventId")]
-[Table("attendances")]
-[Index("EventId", Name = "EventID")]
-public partial class Attendance
+[PrimaryKey("UserID", "EventID")]
+[Index("EventID", Name = "EventID")]
+public partial class attendance
 {
     [Key]
-    [Column("UserID", TypeName = "int(11)")]
-    public int UserId { get; set; }
+    [Column(TypeName = "int(11)")]
+    public int UserID { get; set; }
 
     [Key]
-    [Column("EventID", TypeName = "int(11)")]
-    public int EventId { get; set; }
+    [Column(TypeName = "int(11)")]
+    public int EventID { get; set; }
 
     [Column(TypeName = "timestamp")]
     public DateTime RegisteredAt { get; set; }
@@ -31,11 +30,11 @@ public partial class Attendance
     [Column(TypeName = "enum('going','checked_in','no_show')")]
     public string? Status { get; set; }
 
-    [ForeignKey("EventId")]
-    [InverseProperty("Attendances")]
-    public virtual Event Event { get; set; } = null!;
+    [ForeignKey("EventID")]
+    [InverseProperty("attendances")]
+    public virtual @event Event { get; set; } = null!;
 
-    [ForeignKey("UserId")]
-    [InverseProperty("Attendances")]
-    public virtual User User { get; set; } = null!;
+    [ForeignKey("UserID")]
+    [InverseProperty("attendances")]
+    public virtual user User { get; set; } = null!;
 }
