@@ -46,7 +46,8 @@ CREATE TABLE Events (
     Description   TEXT,
     EventDateTime DATETIME NOT NULL,
     Location      POINT NOT NULL,           -- pl. POINT(19.0402 47.4979)
-    LocationName  VARCHAR(255),                        
+    LocationName  VARCHAR(255),
+    ImageFileName VARCHAR(255),
     Address       VARCHAR(255),
     TicketPrice   DECIMAL(10,2) DEFAULT 0,
     OrganizerID   INT NOT NULL,
@@ -150,19 +151,31 @@ CREATE TABLE UserBadges (
     FOREIGN KEY (BadgeID) REFERENCES Badges(BadgeID) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
--- ===========================================================================
--- 9. Értékelések 
+-- 9. Értékelések
 -- ===========================================================================
 CREATE TABLE Reviews (
-    ReviewID    INT AUTO_INCREMENT PRIMARY KEY,
-    EventID     INT NOT NULL,
-    UserID      INT NOT NULL,
-    Rating      TINYINT NOT NULL CHECK (Rating BETWEEN 1 AND 5),
-    Comment     TEXT,
-    CreatedAt   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
+    ReviewID INT AUTO_INCREMENT PRIMARY KEY,
+    EventID INT NOT NULL,
+    UserID INT NOT NULL,
+    Rating TINYINT NOT NULL CHECK (Rating BETWEEN 1 AND 5),
+    Comment TEXT,
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE KEY uq_one_review_per_user (UserID, EventID),
     FOREIGN KEY (EventID) REFERENCES Events(EventID) ON DELETE CASCADE,
     FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE
+) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-) ENGINE=InnoDB;
+-- 10. Kedvencek
+-- ===========================================================================
+CREATE TABLE EventFavorites (
+    UserID INT NOT NULL,
+    EventID INT NOT NULL,
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    PRIMARY KEY (UserID, EventID),
+    FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE,
+    FOREIGN KEY (EventID) REFERENCES Events(EventID) ON DELETE CASCADE,
+    
+    INDEX idx_user (UserID),
+    INDEX idx_event (EventID)
+) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
