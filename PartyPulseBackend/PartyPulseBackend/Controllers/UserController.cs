@@ -55,6 +55,9 @@ namespace PartyPulseBackend.Controllers
             user.Email = model.Email;
             user.DisplayName = model.DisplayName;
             user.Bio = model.Bio;
+            user.Gender = model.Gender;
+            user.BirthDate = model.BirthDate;
+            user.LookingFor = model.LookingFor;
             user.UpdatedAt = DateTime.Now;
 
             await _context.SaveChangesAsync();
