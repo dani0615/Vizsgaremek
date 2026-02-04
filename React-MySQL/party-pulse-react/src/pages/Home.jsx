@@ -19,7 +19,7 @@ const Home = () => {
     const featuredEvents = allEvents.slice(0, 3);
 
     return (
-        <main id="home" className="page active">
+        <div id="home" className="home-page">
             <section className="hero">
                 <h1><span className="text-gradient">Party Pulse</span></h1>
                 <p>Találd meg a legjobb bulikat BAZ megyében!</p>
@@ -49,7 +49,7 @@ const Home = () => {
                     )}
                 </div>
             </div>
-        </main>
+        </div>
     );
 };
 

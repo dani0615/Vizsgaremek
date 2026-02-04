@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import AgeGate from './components/AgeGate';
 import Home from './pages/Home';
 import Events from './pages/Events';
 import Ranking from './pages/Ranking';
@@ -15,16 +16,21 @@ function App() {
     return (
         <AuthProvider>
             <Router>
-                <Navbar />
-                <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/events" element={<Events />} />
-                    <Route path="/ranking" element={<Ranking />} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/profile" element={<Profile />} />
-                    {/* További route-ok, ha szükséges */}
-                </Routes>
-                <Footer />
+                <div className="app-wrapper">
+                    <AgeGate />
+                    <Navbar />
+                    <main>
+                        <Routes>
+                            <Route path="/" element={<Home />} />
+                            <Route path="/events" element={<Events />} />
+                            <Route path="/ranking" element={<Ranking />} />
+                            <Route path="/login" element={<Login />} />
+                            <Route path="/profile" element={<Profile />} />
+                            {/* További route-ok, ha szükséges */}
+                        </Routes>
+                    </main>
+                    <Footer />
+                </div>
             </Router>
         </AuthProvider>
     );

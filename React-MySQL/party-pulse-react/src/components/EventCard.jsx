@@ -4,14 +4,22 @@ const EventCard = ({ event }) => {
     return (
         <div className="event-card">
             <div className="event-img" style={{ backgroundImage: `url('${event.img}')` }}>
-                <span className="event-tag">{event.type}</span>
+                <div className="event-type-badge">{event.type}</div>
             </div>
             <div className="event-content">
+                <div className="event-date-mini">
+                    <i className="far fa-calendar-alt"></i> {event.displayDate}
+                </div>
                 <h3>{event.name}</h3>
-                <p><i className="fas fa-map-marker-alt"></i> {event.city} - {event.place}</p>
-                <p><i className="fas fa-calendar"></i> {event.date}</p>
-                <p style={{ fontSize: '0.8rem', margin: '10px 0', opacity: 0.7 }}>{event.desc}</p>
-                <button className="btn-neon-outline" style={{ width: '100%' }} onClick={() => alert('Ott leszel! RSVP elmentve.')}>Ott leszek!</button>
+                <p className="event-location-text">
+                    <i className="fas fa-map-marker-alt"></i> {event.city}, {event.place}
+                </p>
+                <p className="event-description-short">{event.desc}</p>
+                <div className="event-card-actions">
+                    <button className="btn-neon-outline" onClick={() => alert(`${event.name}: Szuper! Hozzáadtuk a naptáradhoz.`)}>
+                        Ott leszek!
+                    </button>
+                </div>
             </div>
         </div>
     );

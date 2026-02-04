@@ -35,11 +35,11 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
     }, []);
 
-    const login = async (email, password) => {
+    const login = async (identifier, password) => {
         setLoading(true);
         setError(null);
         try {
-            const response = await apiClient.post('/Auth/login', { email, password });
+            const response = await apiClient.post('/Auth/login', { identifier, password });
 
             const { token, username, role } = response.data;
 
@@ -62,11 +62,19 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const register = async (username, email, password) => {
+    const register = async (username, email, password, gender, birthDate, lookingFor, displayName) => {
         setLoading(true);
         setError(null);
         try {
-            await apiClient.post('/api/Registry', { username, email, password });
+            await apiClient.post('/api/Registry', {
+                username,
+                email,
+                password,
+                gender,
+                birthDate,
+                lookingFor,
+                displayName
+            });
             // Sikeres regisztráció után automatikusan bejelentkeztethetnénk,
             // de most csak visszaadjuk a sikert.
             return { success: true };

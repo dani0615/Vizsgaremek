@@ -1,4 +1,28 @@
+## Indítás (Setup)
+
+Amikor elõször klónozod a projektet, a `node_modules` mappa hiányzik (mivel nincs a gitben). Ahhoz, hogy a `vite` paranccs mûködjön, elõször telepítened kell a függõségeket.
+
+### A legegyszerûbb megoldás:
+Futtasd az alábbi parancsot a projekt gyökerében:
+```powershell
+./setup.ps1
+```
+
+### Vagy manuálisan:
+**Ha Bun-t használsz:**
+```bash
+bun install
+bun dev
+```
+
+**Ha NPM-et használsz:**
+```bash
+npm install
+---
+
 # React + Vite
+
+Ez a projekt React + Vite alapú.
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 

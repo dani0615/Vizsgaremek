@@ -25,20 +25,33 @@ const Navbar = () => {
                 <li><NavLink to="/events" onClick={() => setIsMobileMenuOpen(false)}>Bulik</NavLink></li>
                 <li><NavLink to="/ranking" onClick={() => setIsMobileMenuOpen(false)}>Ranglista</NavLink></li>
                 {isAuthenticated ? (
-                    <>
-                        <li>
-                            <NavLink to="/profile" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#bc13fe', fontWeight: 'bold' }}>
-                                <i className="fas fa-user"></i> {user?.username}
-                            </NavLink>
-                        </li>
-                        <li>
-                            <a onClick={handleLogout} className="btn-neon-outline" style={{ cursor: 'pointer' }}>
-                                Kilépés
-                            </a>
-                        </li>
-                    </>
+                    <li className="user-dropdown-container">
+                        <div className="user-profile-trigger">
+                            <i className="fas fa-user-circle"></i>
+                            <span>{user?.username}</span>
+                            <i className="fas fa-chevron-down"></i>
+                        </div>
+                        <ul className="dropdown-menu">
+                            <li>
+                                <NavLink to="/profile" onClick={() => setIsMobileMenuOpen(false)}>
+                                    <i className="fas fa-id-card"></i> Profilom
+                                </NavLink>
+                            </li>
+                            <li>
+                                <NavLink to="/profile" onClick={() => setIsMobileMenuOpen(false)}>
+                                    <i className="fas fa-user-edit"></i> Profil szerkesztése
+                                </NavLink>
+                            </li>
+                            <li className="dropdown-divider"></li>
+                            <li>
+                                <a onClick={handleLogout} style={{ cursor: 'pointer' }}>
+                                    <i className="fas fa-sign-out-alt"></i> Kijelentkezés
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
                 ) : (
-                    <li><NavLink to="/login" className="btn-neon-outline" onClick={() => setIsMobileMenuOpen(false)}>Belépés</NavLink></li>
+                    <li><NavLink to="/login" className="btn-login-premium" onClick={() => setIsMobileMenuOpen(false)}>Belépés</NavLink></li>
                 )}
             </ul>
             <div className="menu-toggle" onClick={toggleMobileMenu}>

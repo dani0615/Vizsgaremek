@@ -11,20 +11,47 @@ export const useEvents = () => {
         setError(null);
         try {
             const response = await apiClient.get('/Event/AllEvents');
+            const baseUrl = apiClient.defaults.baseURL || 'https://localhost:7234';
 
-            const formattedEvents = response.data.map((event, index) => ({
-                id: index + 1, // Vagy event.id ha van
-                eventId: event.id, // Eredeti ID megőrzése
-                name: event.title,
-                desc: event.description,
-                date: formatDate(event.eventDateTime),
-                place: event.locationName,
-                city: extractCityFromAddress(event.address),
-                address: event.address,
-                img: getPlaceholderImage(index),
-                type: 'Club Night'
-            }));
+            console.log('Backend response:', response.data);
 
+            const formattedEvents = response.data.map((event, index) => {
+                // Biztosítjuk a mezőnevek elérését (kis- és nagybetű érzéketlen módon, ha szükséges)
+                const eID = event.eventID || event.eventId || event.id || (index + 1);
+                const eTitle = event.title || event.name || 'Névtelen esemény';
+                const eDesc = event.description || event.desc || 'Nincs leírás.';
+                const eAddr = event.address || '';
+                const eDate = event.eventDateTime || event.date || '';
+                const eImageUrl = event.imageUrl || event.imageFileName || '';
+                const eLat = event.latitude || null;
+                const eLon = event.longitude || null;
+
+                // Meghatározzuk, hogy a kapott képnév valódi-e vagy csak egy placeholder név a DB-ben
+                const isDummyImage = eImageUrl && (
+                    eImageUrl.toLowerCase().includes('rocknight') ||
+                    eImageUrl.toLowerCase().includes('jazz.jpg') ||
+                    eImageUrl.toLowerCase().includes('techno') ||
+                    eImageUrl.toLowerCase().includes('placeholder')
+                );
+
+                return {
+                    id: eID,
+                    eventId: eID,
+                    name: eTitle,
+                    desc: eDesc,
+                    date: eDate ? eDate.split('T')[0] : '',
+                    displayDate: formatDate(eDate),
+                    place: event.locationName || 'Helyszín hamarosan',
+                    city: extractCityFromAddress(eAddr),
+                    address: eAddr,
+                    lat: eLat,
+                    lon: eLon,
+                    img: (eImageUrl && !isDummyImage) ? (eImageUrl.startsWith('http') ? eImageUrl : `${baseUrl}${eImageUrl}`) : getPlaceholderImage(index),
+                    type: event.musicStyle || 'Club Night'
+                };
+            });
+
+            console.log('Formatted events:', formattedEvents);
             setEvents(formattedEvents);
         } catch (err) {
             console.error('Error fetching events:', err);
@@ -37,18 +64,32 @@ export const useEvents = () => {
     return { events, loading, error, fetchEvents };
 };
 
-// Utils (lokálisan, vagy később külön utils fájlba szervezhető)
+// Utils 
 const extractCityFromAddress = (address) => {
-    if (!address) return 'Ismeretlen';
+    if (!address) return 'Borsod';
+    const addrLower = address.toLowerCase();
+
+    // Intelligensebb város-érzékelés BAZ megyére fókuszálva
+    if (addrLower.includes('miskolc')) return 'Miskolc';
+    if (addrLower.includes('mezőkövesd')) return 'Mezőkövesd';
+    if (addrLower.includes('ózd')) return 'Ózd';
+    if (addrLower.includes('sárospatak')) return 'Sárospatak';
+    if (addrLower.includes('budapest')) return 'Budapest';
+
     const parts = address.split(',');
     return parts[0].trim();
 };
 
 const formatDate = (dateTime) => {
-    if (!dateTime) return '';
+    if (!dateTime) return 'Hamarosan';
     try {
         const date = new Date(dateTime);
-        return date.toISOString().split('T')[0];
+        if (isNaN(date.getTime())) return dateTime;
+        return date.toLocaleDateString('hu-HU', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
     } catch (e) {
         return dateTime;
     }
