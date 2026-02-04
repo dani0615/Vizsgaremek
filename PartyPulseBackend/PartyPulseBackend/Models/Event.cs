@@ -50,6 +50,7 @@ public partial class @event
     [Column(TypeName = "timestamp")]
     public DateTime CreatedAt { get; set; }
 
+
     [ForeignKey("OrganizerID")]
     [InverseProperty("events")]
     public virtual user Organizer { get; set; } = null!;

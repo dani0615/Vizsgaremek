@@ -20,23 +20,36 @@ namespace PartyPulseBackend.Controllers
         {
             try
             {
-                var events = await _context.Events.Select(e => new EventDTO
+                var rawEvents = await _context.Events
+                    .FromSqlRaw("SELECT EventID, Title, Description, EventDateTime, LocationName, ImageFileName, Address, TicketPrice, OrganizerID, MusicStyle, MaxAttendees, IsPublic, CreatedAt, ST_X(Location) AS Longitude, ST_Y(Location) AS Latitude FROM Events")
+                    .AsNoTracking()
+                    .ToListAsync();
+                var events = rawEvents.Select(e => new EventDTO
                 {
+                    EventID = e.EventID,
                     Title = e.Title,
                     Description = e.Description,
                     EventDateTime = e.EventDateTime,
                     Address = e.Address,
                     LocationName = e.LocationName,
+                    MusicStyle = e.MusicStyle,
+                    Latitude= e.Latitude,
+                    Longitude = e.Longitude,
                     ImageUrl = e.ImageFileName != null
                         ? $"/images/events/{e.ImageFileName}"
                         : null
-                }).ToListAsync();
+                }).ToList();
 
                 return Ok(events);
             }
             catch (Exception ex)
             {
-                return BadRequest($"Hiba az események betöltésekor: {ex.Message}");
+                var msg=$"Hiba az események betöltésekor: {ex.Message}";
+                if(ex.InnerException != null)
+                {
+                    msg += $" | Belső hiba: {ex.InnerException.Message}";
+                }
+                return BadRequest(msg);
             }
         }
 
