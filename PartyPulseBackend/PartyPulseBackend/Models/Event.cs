@@ -49,7 +49,9 @@ public partial class @event
 
     [Column(TypeName = "timestamp")]
     public DateTime CreatedAt { get; set; }
+    public double? Latitude { get; set; }
 
+    public double? Longitude { get; set; }
 
     [ForeignKey("OrganizerID")]
     [InverseProperty("events")]
