@@ -28,10 +28,10 @@ namespace PartyPulseBackend.Controllers
            
             var user = await _context.Users
                 .Include(u => u.passwordsalt)
-                .FirstOrDefaultAsync(u => u.Email == loginModel.Identifier);
+                .FirstOrDefaultAsync(u => u.Email == loginModel.Identifier || u.Username==loginModel.Identifier);
 
             if (user == null)
-                return Unauthorized("Hibás email cím vagy jelszó.");
+                return Unauthorized("Hibás felhasználónév/email vagy jelszó.");
 
            
             if (user.IsActive != true)
@@ -42,7 +42,7 @@ namespace PartyPulseBackend.Controllers
             string computedHash = Program.CreateSHA256(loginModel.Password + salt);
 
             if (computedHash != user.passwordsalt.PasswordHash)
-                return Unauthorized("Hibás email cím vagy jelszó.");
+                return Unauthorized("Hibás felhasználónév/email vagy jelszó.");
 
           
             var token = GenerateJwtToken(user);
