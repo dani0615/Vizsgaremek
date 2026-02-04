@@ -44,7 +44,11 @@ namespace PartyPulseBackend.Controllers
                         Role = "user",
                         Points = 0,
                         CreatedAt = DateTime.Now,
-                        UpdatedAt = DateTime.Now
+                        UpdatedAt = DateTime.Now,
+                        Gender=regModel.Gender,
+                        BirthDate = regModel.BirthDate,
+                        LookingFor = regModel.LookingFor,
+                        DisplayName = regModel.DisplayName ?? regModel.Username
                     };
 
                     await _context.Users.AddAsync(newUser);
