@@ -34,7 +34,10 @@ namespace PartyPulseBackend.Controllers
                 Bio = user.Bio,
                 Points = user.Points,
                 Role = user.Role,
-                ProfilePictureUrl =user.ProfilePicture != null ? $"/api/User/avatar/{userId}":null
+                ProfilePictureUrl =user.ProfilePicture != null ? $"/api/User/avatar/{userId}":null,
+                Gender = user.Gender,
+                BirthDate = user.BirthDate,
+                LookingFor = user.LookingFor
             };
             return Ok(profile);
         }
