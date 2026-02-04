@@ -28,7 +28,7 @@ namespace PartyPulseBackend.Controllers
            
             var user = await _context.Users
                 .Include(u => u.passwordsalt)
-                .FirstOrDefaultAsync(u => u.Email == loginModel.Email);
+                .FirstOrDefaultAsync(u => u.Email == loginModel.Identifier);
 
             if (user == null)
                 return Unauthorized("Hibás email cím vagy jelszó.");
