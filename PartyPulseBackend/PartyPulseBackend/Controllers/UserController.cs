@@ -34,10 +34,11 @@ namespace PartyPulseBackend.Controllers
                 Bio = user.Bio,
                 Points = user.Points,
                 Role = user.Role,
-                ProfilePictureUrl = user.ProfilePicture != null ? $"/api/User/avatar/{userId}" : null,
+                ProfilePictureUrl =user.ProfilePicture != null ? $"/api/User/avatar/{userId}" : null,
                 Gender = user.Gender,
                 BirthDate = user.BirthDate,
-                LookingFor = user.LookingFor
+                LookingFor = user.LookingFor,
+                LastModified = user.UpdatedAt
             };
             return Ok(profile);
         }
@@ -86,8 +87,9 @@ namespace PartyPulseBackend.Controllers
             return Ok("Jelszó sikeresen megváltoztatva.");
         }
         [HttpPost("avatar")]
-        public async Task<IActionResult> UploadAvatar(IFormFile file)
+        public async Task<IActionResult> UploadAvatar([FromForm] AvatarUploadDTO model)
         {
+            var file = model.File;
             if (file==null|| file.Length == 0) return BadRequest("Nincs kiválasztva fájl.");
 
             var allowedTypes = new[] { "image/jpeg", "image/png", "image/gif" };
