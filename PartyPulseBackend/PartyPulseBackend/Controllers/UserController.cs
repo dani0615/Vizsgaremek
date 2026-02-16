@@ -18,7 +18,7 @@ namespace PartyPulseBackend.Controllers
         {
             _context = context;
         }
-        private int GetUserId()=>int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        private int GetUserId() => int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
         [HttpGet("me")]
         public async Task<IActionResult> GetMyProfile()
@@ -34,7 +34,7 @@ namespace PartyPulseBackend.Controllers
                 Bio = user.Bio,
                 Points = user.Points,
                 Role = user.Role,
-                ProfilePictureUrl =user.ProfilePicture != null ? $"/api/User/avatar/{userId}":null,
+                ProfilePictureUrl = user.ProfilePicture != null ? $"/api/User/avatar/{userId}" : null,
                 Gender = user.Gender,
                 BirthDate = user.BirthDate,
                 LookingFor = user.LookingFor
@@ -48,9 +48,9 @@ namespace PartyPulseBackend.Controllers
             var user = await _context.Users.FindAsync(userId);
             if (user == null) return NotFound();
 
-            if(user.Email != model.Email && await _context.Users.AnyAsync(u=>u.Email==model.Email))
+            if (user.Email != model.Email && await _context.Users.AnyAsync(u => u.Email==model.Email))
             {
-              return BadRequest("Ez az email cím már használatban van.");
+                return BadRequest("Ez az email cím már használatban van.");
             }
             user.Email = model.Email;
             user.DisplayName = model.DisplayName;
@@ -68,12 +68,12 @@ namespace PartyPulseBackend.Controllers
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDTO model)
         {
             var userId = GetUserId();
-            var user = await _context.Users.Include(u=>u.passwordsalt).FirstOrDefaultAsync(u=>u.UserID==userId);
+            var user = await _context.Users.Include(u => u.passwordsalt).FirstOrDefaultAsync(u => u.UserID==userId);
 
             if (user == null || user.passwordsalt==null) return NotFound();
 
-            string oldHash=Program.CreateSHA256(model.OldPassword+user.passwordsalt.Salt);
-            if(oldHash != user.passwordsalt.PasswordHash)
+            string oldHash = Program.CreateSHA256(model.OldPassword+user.passwordsalt.Salt);
+            if (oldHash != user.passwordsalt.PasswordHash)
             {
                 return BadRequest("A jelenlegi jelszó hibás");
             }
@@ -88,19 +88,19 @@ namespace PartyPulseBackend.Controllers
         [HttpPost("avatar")]
         public async Task<IActionResult> UploadAvatar(IFormFile file)
         {
-          if(file==null|| file.Length == 0) return BadRequest("Nincs kiválasztva fájl.");
+            if (file==null|| file.Length == 0) return BadRequest("Nincs kiválasztva fájl.");
 
-          var allowedTypes=new[] { "image/jpeg", "image/png", "image/gif" };
-            if(!allowedTypes.Contains(file.ContentType))
+            var allowedTypes = new[] { "image/jpeg", "image/png", "image/gif" };
+            if (!allowedTypes.Contains(file.ContentType))
             {
                 return BadRequest("Csak JPEG, PNG és GIF fájlok engedélyezettek.");
             }
 
             var userId = GetUserId();
             var user = await _context.Users.FindAsync(userId);
-            if(user == null) return NotFound();
+            if (user == null) return NotFound();
 
-            using(var memorySteam= new MemoryStream())
+            using (var memorySteam = new MemoryStream())
             {
                 await file.CopyToAsync(memorySteam);
                 user.ProfilePicture = memorySteam.ToArray();
@@ -108,7 +108,7 @@ namespace PartyPulseBackend.Controllers
                 user.UpdatedAt = DateTime.Now;
             }
             await _context.SaveChangesAsync();
-            return Ok(new {url=$"/api/User/avatar/{userId}"});
+            return Ok(new { url = $"/api/User/avatar/{userId}" });
 
         }
         [AllowAnonymous]

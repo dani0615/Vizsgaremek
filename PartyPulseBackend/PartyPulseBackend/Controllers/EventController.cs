@@ -8,7 +8,7 @@ using System.Security.Claims;
 
 namespace PartyPulseBackend.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class EventController : ControllerBase
     {
@@ -24,6 +24,7 @@ namespace PartyPulseBackend.Controllers
                     .FromSqlRaw("SELECT EventID, Title, Description, EventDateTime, LocationName, ImageFileName, Address, TicketPrice, OrganizerID, MusicStyle, MaxAttendees, IsPublic, CreatedAt, ST_X(Location) AS Longitude, ST_Y(Location) AS Latitude FROM Events")
                     .AsNoTracking()
                     .ToListAsync();
+
                 var events = rawEvents.Select(e => new EventDTO
                 {
                     EventID = e.EventID,
@@ -33,7 +34,7 @@ namespace PartyPulseBackend.Controllers
                     Address = e.Address,
                     LocationName = e.LocationName,
                     MusicStyle = e.MusicStyle,
-                    Latitude= e.Latitude,
+                    Latitude = e.Latitude,
                     Longitude = e.Longitude,
                     ImageUrl = e.ImageFileName != null
                         ? $"/images/events/{e.ImageFileName}"
@@ -44,8 +45,9 @@ namespace PartyPulseBackend.Controllers
             }
             catch (Exception ex)
             {
-                var msg=$"Hiba az események betöltésekor: {ex.Message}";
-                if(ex.InnerException != null)
+                
+                var msg = $"Hiba az események betöltésekor: {ex.Message}";
+                if (ex.InnerException != null)
                 {
                     msg += $" | Belső hiba: {ex.InnerException.Message}";
                 }
@@ -61,7 +63,7 @@ namespace PartyPulseBackend.Controllers
 
         [HttpPost("Create")]
         [Authorize(Roles = "admin,organizer")]
-        public async Task<IActionResult> CreateEvent([FromForm] CreateEventDTO model) 
+        public async Task<IActionResult> CreateEvent([FromForm] CreateEventDTO model)
         {
             try
             {
@@ -71,7 +73,7 @@ namespace PartyPulseBackend.Controllers
 
                 string? fileName = null;
 
-                
+
                 if (model.Image != null && model.Image.Length > 0)
                 {
                     string uploadsFolder = Path.Combine(_env.WebRootPath, "images", "events");
@@ -101,7 +103,7 @@ namespace PartyPulseBackend.Controllers
                     MaxAttendees = model.MaxAttendees,
                     IsPublic = model.IsPublic,
                     OrganizerID = currentUserId,
-                    ImageFileName = fileName, 
+                    ImageFileName = fileName,
                     CreatedAt = DateTime.Now
                 };
 
@@ -116,6 +118,6 @@ namespace PartyPulseBackend.Controllers
             }
         }
 
-        
+
     }
 }
