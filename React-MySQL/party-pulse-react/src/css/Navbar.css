@@ -1,0 +1,291 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 5%;
+    background: rgba(11, 11, 26, 0.95);
+    backdrop-filter: blur(15px);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 1000;
+    border-bottom: 1px solid rgba(188, 19, 254, 0.3);
+}
+
+.logo {
+    font-size: 1.8rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+    cursor: pointer;
+}
+
+.logo span {
+    color: var(--secondary);
+    text-shadow: 0 0 10px var(--secondary);
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 2rem;
+    align-items: center;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 600;
+    transition: all 0.3s ease;
+    position: relative;
+    padding: 5px 0;
+}
+
+.nav-links a:hover {
+    color: white;
+}
+
+.nav-links a.active {
+    color: var(--accent);
+    text-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
+}
+
+.nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    transition: width 0.3s ease;
+    box-shadow: 0 0 10px var(--accent);
+}
+
+.nav-links a.active::after {
+    width: 100%;
+}
+
+.nav-links a.btn-neon-outline.active::after {
+    display: none;
+}
+
+.nav-links a.btn-neon-outline.active {
+    background: var(--accent);
+    color: var(--bg);
+    box-shadow: 0 0 20px var(--accent);
+}
+
+/* Premium Login Button */
+.btn-login-premium {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white !important;
+    padding: 10px 28px !important;
+    border-radius: 50px !important;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 15px rgba(188, 19, 254, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-login-premium::after {
+    display: none !important;
+}
+
+.btn-login-premium:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 6px 25px rgba(188, 19, 254, 0.6);
+    filter: brightness(1.1);
+}
+
+/* User Dropdown */
+.user-dropdown-container {
+    position: relative;
+    cursor: pointer;
+}
+
+.user-profile-trigger {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 30px;
+    transition: 0.3s;
+}
+
+.user-profile-trigger i:first-child {
+    font-size: 1.4rem;
+    color: var(--accent);
+}
+
+.user-profile-trigger span {
+    font-weight: 700;
+    color: white;
+}
+
+.user-profile-trigger i:last-child {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+    transition: 0.3s;
+}
+
+.user-dropdown-container:hover .user-profile-trigger {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--accent);
+}
+
+.user-dropdown-container:hover .user-profile-trigger i:last-child {
+    transform: rotate(180deg);
+    color: var(--accent);
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: calc(100% + 15px);
+    right: 0;
+    width: 220px;
+    background: rgba(11, 11, 26, 0.98);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(188, 19, 254, 0.3);
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(188, 19, 254, 0.1);
+    list-style: none;
+    padding: 10px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    z-index: 1001;
+}
+
+.user-dropdown-container:hover .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-menu::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    right: 25px;
+    width: 20px;
+    height: 20px;
+    background: rgba(11, 11, 26, 0.98);
+    border-left: 1px solid rgba(188, 19, 254, 0.3);
+    border-top: 1px solid rgba(188, 19, 254, 0.3);
+    transform: rotate(45deg);
+}
+
+.dropdown-menu li {
+    margin: 5px 0;
+}
+
+.dropdown-menu a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 15px;
+    color: rgba(255, 255, 255, 0.8) !important;
+    text-decoration: none;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    transition: 0.3s !important;
+}
+
+.dropdown-menu a::after {
+    display: none !important;
+}
+
+.dropdown-menu a i {
+    font-size: 1.1rem;
+    color: var(--primary);
+    width: 20px;
+}
+
+.dropdown-menu a:hover {
+    background: rgba(188, 19, 254, 0.1) !important;
+    color: white !important;
+    transform: translateX(5px);
+}
+
+.dropdown-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 10px 0 !important;
+}
+
+.menu-toggle {
+    display: none;
+    font-size: 1.5rem;
+    color: var(--accent);
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+        flex-direction: column;
+        position: fixed;
+        top: 70px;
+        left: 0;
+        width: 100%;
+        background: rgba(11, 11, 26, 0.98);
+        backdrop-filter: blur(20px);
+        padding: 20px;
+        gap: 1rem;
+        border-bottom: 1px solid rgba(188, 19, 254, 0.3);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        transition: all 0.3s ease;
+    }
+
+    .nav-links.active {
+        display: flex;
+    }
+
+    .user-dropdown-container {
+        width: 100%;
+    }
+
+    .dropdown-menu {
+        position: static;
+        width: 100%;
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        padding-left: 20px;
+    }
+
+    .dropdown-menu::before {
+        display: none;
+    }
+
+    .menu-toggle {
+        display: block;
+        transition: transform 0.3s ease;
+    }
+
+    .menu-toggle:active {
+        transform: scale(0.9);
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar {
+        padding: 0.8rem 4%;
+    }
+
+    .logo {
+        font-size: 1.4rem;
+    }
+}

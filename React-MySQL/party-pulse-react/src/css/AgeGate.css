@@ -1,0 +1,96 @@
+/* Age Gate Styles */
+.age-gate-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(11, 11, 26, 0.95);
+    backdrop-filter: blur(20px);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.age-gate-box {
+    background: rgba(18, 18, 38, 0.8);
+    border: 1px solid rgba(188, 19, 254, 0.5);
+    box-shadow: 0 0 80px rgba(188, 19, 254, 0.4), inset 0 0 30px rgba(188, 19, 254, 0.1);
+    border-radius: 30px;
+    padding: 50px;
+    max-width: 550px;
+    width: 100%;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.age-gate-box::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(188, 19, 254, 0.1) 0%, transparent 70%);
+    animation: rotateBg 10s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes rotateBg {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.age-gate-content {
+    position: relative;
+    z-index: 1;
+}
+
+.age-gate-box h2 {
+    font-size: 2.5rem;
+    color: white;
+    margin-bottom: 25px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    text-shadow: 0 0 20px rgba(188, 19, 254, 0.8);
+}
+
+.age-gate-box p {
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 40px;
+    line-height: 1.8;
+    font-size: 1.1rem;
+}
+
+.age-gate-actions {
+    display: flex;
+    gap: 25px;
+    justify-content: center;
+}
+
+.age-gate-actions button {
+    flex: 1;
+    max-width: 180px;
+    font-size: 1rem;
+    padding: 15px 30px;
+}
+
+.age-gate-box .logo-text {
+    font-size: 3rem;
+    margin-bottom: 30px;
+    display: block;
+    font-weight: 900;
+}
+
+.neon-text {
+    color: var(--secondary);
+    text-shadow: 0 0 10px var(--secondary), 0 0 20px var(--secondary);
+}

@@ -1,0 +1,97 @@
+.home-page {
+    /* A kezdőlapon a Hero miatt nem kell felső padding a konténernek */
+    padding-top: 0;
+}
+
+.hero {
+    min-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 80px 5% 40px;
+    position: relative;
+    overflow: hidden;
+    /* 80px felső padding a navbar miatt */
+    background: radial-gradient(circle at center, rgba(26, 11, 46, 0.4) 0%, rgba(11, 11, 26, 0.9) 100%),
+        url('https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1500&q=80');
+    background-size: cover;
+    background-position: center;
+    margin-bottom: 40px;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.hero h1 {
+    font-size: clamp(3rem, 10vw, 5.5rem);
+    text-transform: uppercase;
+    font-weight: 900;
+    margin-bottom: 1rem;
+    filter: drop-shadow(0 0 20px rgba(188, 19, 254, 0.3));
+}
+
+.hero p {
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+}
+
+.search-box {
+    display: flex;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 10px;
+    border-radius: 50px;
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    width: 100%;
+    max-width: 600px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.search-box:focus-within {
+    border-color: var(--primary-color);
+    box-shadow: 0 10px 40px rgba(188, 19, 254, 0.2);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.search-box input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    outline: none;
+    font-size: 1rem;
+}
+
+@media (max-width: 768px) {
+    .hero {
+        height: 50vh;
+        padding: 0 4%;
+    }
+
+    .hero h1 {
+        font-size: clamp(2rem, 6vw, 3rem);
+    }
+}
+
+@media (max-width: 480px) {
+    .search-box {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .search-box input,
+    .search-box button {
+        width: 100%;
+    }
+}
