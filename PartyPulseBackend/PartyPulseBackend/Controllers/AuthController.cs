@@ -50,6 +50,7 @@ namespace PartyPulseBackend.Controllers
             return Ok(new
             {
                 token = token,
+                userId = user.UserID,
                 username = user.Username,
                 role = user.Role
             });

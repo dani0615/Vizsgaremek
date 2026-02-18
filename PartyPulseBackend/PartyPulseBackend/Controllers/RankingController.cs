@@ -23,29 +23,67 @@ namespace PartyPulseBackend.Controllers
             try
             {
                 if (count > 100) count = 100;
-                var rawData=await _context.Rankings
-                    .Where(r=>r.RankType==type)
-                    .OrderByDescending(r=>r.Score)
-                    .Take(count)
-                    .Select(r => new
-                    {
-                        UserName=r.User.DisplayName??"Névtelen",
-                        Score=r.Score,
-                        PartyCount =r.User.attendances.Count()
-                    })
-                    .ToListAsync();
-                var leaderboard=rawData.Select((item,index)=>new LeaderboardDTO
+
+                List<LeaderboardDTO> leaderboard;
+
+                if (type == "all_time")
                 {
-                    Rank=index+1,
-                    UserName=item.UserName,
-                    PartyCount=item.PartyCount,
-                    Score =item.Score
-                }).ToList();
+                    
+                    var players = await _context.Users
+                        .OrderByDescending(u => u.Points)
+                        .Take(count)
+                        .Select(u => new
+                        {
+                            UserId = u.UserID,
+                            UserName = u.DisplayName ?? u.Username,
+                            Score = u.Points,
+                            PartyCount = u.attendances.Count(),
+                            HasProfilePicture = u.ProfilePicture != null
+                        })
+                        .ToListAsync();
+
+                    leaderboard = players.Select((item, index) => new LeaderboardDTO
+                    {
+                        UserId = item.UserId,
+                        Rank = index + 1,
+                        UserName = item.UserName,
+                        PartyCount = item.PartyCount,
+                        Score = item.Score,
+                        ProfilePictureUrl = item.HasProfilePicture ? $"/api/User/avatar/{item.UserId}" : null
+                    }).ToList();
+                }
+                else
+                {
+                   
+                    var rawData = await _context.Rankings
+                        .Where(r => r.RankType == type)
+                        .OrderByDescending(r => r.Score)
+                        .Take(count)
+                        .Select(r => new
+                        {
+                            UserId = r.UserID,
+                            UserName = r.User.DisplayName ?? r.User.Username,
+                            Score = r.Score,
+                            PartyCount = r.User.attendances.Count(),
+                            HasProfilePicture = r.User.ProfilePicture != null
+                        })
+                        .ToListAsync();
+
+                    leaderboard = rawData.Select((item, index) => new LeaderboardDTO
+                    {
+                        UserId = item.UserId,
+                        Rank = index + 1,
+                        UserName = item.UserName,
+                        PartyCount = item.PartyCount,
+                        Score = item.Score,
+                        ProfilePictureUrl = item.HasProfilePicture ? $"/api/User/avatar/{item.UserId}" : null
+                    }).ToList();
+                }
+
                 return Ok(leaderboard);
             }
             catch (Exception ex)
             {
-
                 return BadRequest($"Hiba:{ex.Message}");
             }
         }
