@@ -101,16 +101,17 @@ CREATE TABLE Matches (
 -- 6. Chat üzenetek 
 -- ===========================================================================
 CREATE TABLE ChatMessages (
-    MessageID   BIGINT AUTO_INCREMENT PRIMARY KEY,
-    RoomID      CHAR(36) NOT NULL,
-    SenderID    INT NOT NULL,
-    Message     TEXT NOT NULL,
-    SentAt      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    IsRead      BOOLEAN DEFAULT FALSE,
+    MessageID         BIGINT AUTO_INCREMENT PRIMARY KEY,
+    MatchID           INT NOT NULL,
+    SenderID          INT NOT NULL,
+    EncryptedMessage  TEXT NOT NULL,          -- Ide kerül a Base64 kódolt AES titkosított szöveg
+    EncryptionIV      VARCHAR(64) NOT NULL,   -- Az AES dekódoláshoz szükséges egyedi vektor (Base64)
+    SentAt            TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    IsRead            BOOLEAN DEFAULT FALSE,
 
-    FOREIGN KEY (RoomID) REFERENCES Matches(ChatRoomID) ON DELETE CASCADE,
+    FOREIGN KEY (MatchID) REFERENCES Matches(MatchID) ON DELETE CASCADE,
     FOREIGN KEY (SenderID) REFERENCES Users(UserID) ON DELETE CASCADE,
-    INDEX idx_room_time (RoomID, SentAt DESC),
+    INDEX idx_match_time (MatchID, SentAt DESC),
     INDEX idx_sender (SenderID),
     INDEX idx_sentat (SentAt)
 ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -179,3 +180,4 @@ CREATE TABLE EventFavorites (
     INDEX idx_user (UserID),
     INDEX idx_event (EventID)
 ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
