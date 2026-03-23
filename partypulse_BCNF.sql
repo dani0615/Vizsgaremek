@@ -1,4 +1,3 @@
-
 -- 1. Felhasználók 
 CREATE TABLE Users (
     UserID            INT AUTO_INCREMENT PRIMARY KEY,
@@ -89,7 +88,9 @@ CREATE TABLE Matches (
     User1Liked  BOOLEAN DEFAULT TRUE,     
     User2Liked  BOOLEAN NULL,            
     MatchedAt   TIMESTAMP NULL,           
-    ChatRoomID  CHAR(36) UNIQUE NULL,     
+    ChatRoomID  CHAR(36) UNIQUE NULL,
+    User1Seen BOOLEAN NOT NULL DEFAULT FALSE,
+    User2Seen BOOLEAN NOT NULL DEFAULT FALSE,
 
     UNIQUE KEY uq_pair (User1ID, User2ID),
     FOREIGN KEY (User1ID) REFERENCES Users(UserID) ON DELETE CASCADE,
