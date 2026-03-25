@@ -15,10 +15,12 @@ export const useRanking = () => {
             });
 
             const formattedRanking = response.data.map(user => ({
+                userId: parseInt(user.userId),
                 rank: user.rank,
                 username: user.userName,
                 events: user.partyCount,
-                points: user.score
+                points: user.score,
+                profilePictureUrl: user.profilePictureUrl
             }));
 
             setRanking(formattedRanking);

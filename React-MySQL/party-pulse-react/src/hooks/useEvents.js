@@ -10,23 +10,23 @@ export const useEvents = () => {
         setLoading(true);
         setError(null);
         try {
-            const response = await apiClient.get('/Event/AllEvents');
+            // AllEventsWithStatus returns attendeeCount + isAttending + isFavorite
+            // per event in a single request — eliminates N×3 per-card API calls
+            const response = await apiClient.get('/Event/AllEventsWithStatus');
             const baseUrl = API_BASE_URL;
 
-            console.log('Backend response:', response.data);
-
             const formattedEvents = response.data.map((event, index) => {
-                // Biztosítjuk a mezőnevek elérését (kis- és nagybetű érzéketlen módon, ha szükséges)
-                const eID = event.eventID || event.eventId || event.id || (index + 1);
-                const eTitle = event.title || event.name || 'Névtelen esemény';
-                const eDesc = event.description || event.desc || 'Nincs leírás.';
-                const eAddr = event.address || '';
-                const eDate = event.eventDateTime || event.date || '';
-                const eImageUrl = event.imageUrl || event.imageFileName || '';
-                const eLat = event.latitude || null;
-                const eLon = event.longitude || null;
+                const eID = event.eventID ?? event.eventId ?? event.EventID ?? event.id ?? (index + 1);
+                const eTitle = event.title ?? event.Title ?? event.name ?? 'Névtelen esemény';
+                const eDesc = event.description ?? event.Description ?? event.desc ?? 'Nincs leírás.';
+                const eAddr = event.address ?? event.Address ?? '';
+                const eDate = event.eventDateTime ?? event.EventDateTime ?? event.date ?? '';
+                const eImageUrl = event.imageUrl ?? event.ImageUrl ?? event.imageFileName ?? '';
+                const eLat = event.latitude ?? event.Latitude ?? null;
+                const eLon = event.longitude ?? event.Longitude ?? null;
+                const eMusicStyle = event.musicStyle ?? event.MusicStyle ?? 'other';
+                const eLocationName = event.locationName ?? event.LocationName ?? 'Helyszín hamarosan';
 
-                // Meghatározzuk, hogy a kapott képnév valódi-e vagy csak egy placeholder név a DB-ben
                 const isDummyImage = eImageUrl && (
                     eImageUrl.toLowerCase().includes('rocknight') ||
                     eImageUrl.toLowerCase().includes('jazz.jpg') ||
@@ -40,18 +40,27 @@ export const useEvents = () => {
                     name: eTitle,
                     desc: eDesc,
                     date: eDate ? eDate.split('T')[0] : '',
+                    rawDate: eDate,
                     displayDate: formatDate(eDate),
-                    place: event.locationName || 'Helyszín hamarosan',
+                    place: eLocationName,
                     city: extractCityFromAddress(eAddr),
                     address: eAddr,
                     lat: eLat,
                     lon: eLon,
                     img: (eImageUrl && !isDummyImage) ? (eImageUrl.startsWith('http') ? eImageUrl : `${baseUrl}${eImageUrl}`) : getPlaceholderImage(index),
-                    type: event.musicStyle || 'Club Night'
+                    type: eMusicStyle,
+                    ticketPrice: event.ticketPrice ?? event.TicketPrice ?? '',
+                    maxAttendees: event.maxAttendees ?? event.MaxAttendees ?? '',
+                    isPublic: event.isPublic ?? event.IsPublic ?? true,
+                    // Status fields from the batch endpoint
+                    attendeeCount: event.attendeeCount ?? event.AttendeeCount ?? 0,
+                    isAttending: event.isAttending ?? event.IsAttending ?? false,
+                    isFavorite: event.isFavorite ?? event.IsFavorite ?? false,
+                    hasEnded: event.hasEnded ?? event.HasEnded ?? false,
+                    isReviewed: event.isReviewed ?? event.IsReviewed ?? false,
                 };
             });
 
-            console.log('Formatted events:', formattedEvents);
             setEvents(formattedEvents);
         } catch (err) {
             console.error('Error fetching events:', err);
@@ -69,7 +78,6 @@ const extractCityFromAddress = (address) => {
     if (!address) return 'Borsod';
     const addrLower = address.toLowerCase();
 
-    // Intelligensebb város-érzékelés BAZ megyére fókuszálva
     if (addrLower.includes('miskolc')) return 'Miskolc';
     if (addrLower.includes('mezőkövesd')) return 'Mezőkövesd';
     if (addrLower.includes('ózd')) return 'Ózd';
