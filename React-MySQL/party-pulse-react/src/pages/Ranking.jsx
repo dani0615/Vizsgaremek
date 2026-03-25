@@ -1,48 +1,99 @@
 import React, { useState, useEffect } from 'react';
 import { useRanking } from '../hooks/useRanking';
+import { useAuth } from '../context/AuthContext';
+import { API_BASE_URL } from '../services/apiConfig';
 import '../css/Ranking.css';
 
 const Ranking = () => {
     const { ranking: rankings, loading, error, fetchRanking } = useRanking();
+    const { user: currentUser } = useAuth();
 
     useEffect(() => {
         fetchRanking();
     }, [fetchRanking]);
 
+    const getInitials = (name) => {
+        if (!name) return '?';
+        const parts = name.split(' ');
+        if (parts.length >= 2) {
+            return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+        }
+        return name.substring(0, 2).toUpperCase();
+    };
+
+    const generateAvatarColor = (name) => {
+        if (!name) return '#bc13fe';
+        let hash = 0;
+        for (let i = 0; i < name.length; i++) {
+            hash = name.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        const hue = hash % 360;
+        return `hsl(${hue}, 70%, 50%)`;
+    };
+
     return (
         <section id="ranking" className="page active">
             <div className="container">
                 <div className="ranking-card">
-                    <h2 style={{ color: '#bc13fe' }}><i className="fas fa-crown"></i> Party Legendák</h2>
-                    <p>Top felhasználók az aktivitásuk alapján.</p>
+                    <h2><i className="fas fa-crown"></i> Party Legendák</h2>
+                    <p className="ranking-header-info">Indítsd be az éjszakát és kerülj a toplista élére!</p>
 
                     {loading ? (
-                        <p style={{ textAlign: 'center' }}>
-                            <i className="fas fa-spinner fa-spin"></i> Ranglista betöltése...
-                        </p>
+                        <div style={{ textAlign: 'center', padding: '40px' }}>
+                            <i className="fas fa-spinner fa-spin fa-2x" style={{ color: '#bc13fe' }}></i>
+                            <p style={{ marginTop: '15px' }}>Ranglista betöltése...</p>
+                        </div>
                     ) : error ? (
-                        <p style={{ textAlign: 'center', color: '#ff4444' }}>{error}</p>
+                        <div style={{ textAlign: 'center', color: '#ff4444', padding: '40px' }}>
+                            <i className="fas fa-exclamation-circle fa-2x"></i>
+                            <p style={{ marginTop: '15px' }}>{error}</p>
+                        </div>
                     ) : (
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Helyezés</th>
-                                    <th>Felhasználó</th>
-                                    <th>Bulik</th>
-                                    <th>Pontszám</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {rankings.map((user) => (
-                                    <tr key={user.rank}>
-                                        <td>{user.rank}.</td>
-                                        <td>{user.rank === 1 ? <strong>{user.username}</strong> : user.username}</td>
-                                        <td>{user.events}</td>
-                                        <td>{user.points}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                        <div className="ranking-list">
+                            {rankings.map((user) => {
+                                const isMe = currentUser && parseInt(currentUser.userId) === parseInt(user.userId);
+                                return (
+                                    <div
+                                        key={user.rank}
+                                        className={`ranking-item ${user.rank <= 3 ? `top-${user.rank}` : ''} ${isMe ? 'is-me' : ''}`}
+                                    >
+                                        <div className="rank-number">
+                                            {user.rank === 1 ? <i className="fas fa-award"></i> : `${user.rank}.`}
+                                        </div>
+
+                                        <div
+                                            className="ranking-avatar-wrapper"
+                                            style={{
+                                                backgroundColor: user.profilePictureUrl ? 'transparent' : generateAvatarColor(user.username)
+                                            }}
+                                        >
+                                            {user.profilePictureUrl ? (
+                                                <img src={`${API_BASE_URL}${user.profilePictureUrl}`} alt={user.username} />
+                                            ) : (
+                                                <span>{getInitials(user.username)}</span>
+                                            )}
+                                        </div>
+
+                                        <div className="user-name">
+                                            {user.username}
+                                            {isMe && <span className="me-badge">TE</span>}
+                                        </div>
+
+                                        <div className="stat-item parties">
+                                            <span className="stat-value">{user.events}</span>
+                                            <span className="stat-label">Buli</span>
+                                        </div>
+
+                                        <div className="score-badge">
+                                            <div className="stat-item">
+                                                <span className="score-value">{user.points}</span>
+                                                <span className="stat-label">Pont</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
                     )}
                 </div>
             </div>

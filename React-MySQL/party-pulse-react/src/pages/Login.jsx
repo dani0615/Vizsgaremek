@@ -11,6 +11,7 @@ const Login = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
 
     // Új mezők a regisztrációhoz
     const [displayName, setDisplayName] = useState('');
@@ -37,12 +38,28 @@ const Login = () => {
         setGender('prefer_not_to_say');
         setBirthDate('');
         setLookingFor('both');
+        setShowPassword(false);
     };
 
     const handleAuth = async (e) => {
         e.preventDefault();
         setError('');
         setSuccessMessage('');
+
+        if (!isLogin) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                setError('Kérjük, adjon meg egy érvényes email címet!');
+                return;
+            }
+
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[\d\W]).{8,}$/;
+            if (!passwordRegex.test(password)) {
+                setError('A jelszónak legalább 8 karakternek kell lennie, tartalmaznia kell kis- és nagybetűt, valamint számot vagy speciális karaktert!');
+                return;
+            }
+        }
+
         setLoading(true);
 
         try {
@@ -265,16 +282,30 @@ const Login = () => {
 
                             <div className="auth-input-group">
                                 <label>Jelszó</label>
-                                <div className="input-with-icon">
+                                <div className="input-with-icon" style={{ position: 'relative' }}>
                                     <i className="fas fa-lock"></i>
                                     <input
-                                        type="password"
+                                        type={showPassword ? "text" : "password"}
                                         placeholder="••••••••"
                                         required
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                         disabled={loading}
+                                        style={{ paddingRight: '45px' }}
                                     />
+                                    <i 
+                                        className={`fas ${showPassword ? "fa-eye-slash" : "fa-eye"}`}
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        style={{ 
+                                            position: 'absolute', 
+                                            right: '15px',
+                                            left: 'auto',
+                                            top: '50%', 
+                                            transform: 'translateY(-50%)', 
+                                            cursor: 'pointer',
+                                            color: 'rgba(255, 255, 255, 0.6)'
+                                        }}
+                                    ></i>
                                 </div>
                             </div>
 
@@ -300,7 +331,7 @@ const Login = () => {
                                 )}
                             </p>
                             {isLogin && (
-                                <p className="forgot-text" onClick={() => alert('Jelszó emlékeztető elküldve!')}>
+                                <p className="forgot-text" onClick={() => navigate('/forgot-password')}>
                                     Elfelejtetted a jelszavad?
                                 </p>
                             )}

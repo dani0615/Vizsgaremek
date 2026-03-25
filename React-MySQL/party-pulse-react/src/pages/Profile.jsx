@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { apiClient, API_BASE_URL } from '../services/apiConfig';
+import EventCard from '../components/EventCard';
+import ReviewModal from '../components/ReviewModal';
+import { useEvents } from '../hooks/useEvents';
 import '../css/Profile.css';
 
 const Profile = () => {
@@ -11,8 +14,26 @@ const Profile = () => {
     const [profileLoading, setProfileLoading] = useState(true);
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState(null);
+    const { events: allEvents, loading: allEventsLoading, fetchEvents } = useEvents();
+    const [showReviewModal, setShowReviewModal] = useState(false);
+    const [eventToReview, setEventToReview] = useState(null);
 
-    // Szerkesztési állapotok
+    const handleReviewClick = (event) => {
+        setEventToReview(event);
+        setShowReviewModal(true);
+    };
+
+    const handleReviewSuccess = () => {
+        fetchEvents();
+    };
+
+    // Split attended events into upcoming and past
+    const myUpcomingEvents = allEvents.filter(e => e.isAttending && !e.hasEnded);
+    const myPastEvents = allEvents.filter(e => e.isAttending && e.hasEnded);
+    const myFavorites = allEvents.filter(e => e.isFavorite);
+    const myEventsLoading = allEventsLoading;
+    const myFavoritesLoading = allEventsLoading;
+
     const [isEditing, setIsEditing] = useState(false);
     const [editData, setEditData] = useState({
         email: '',
@@ -23,7 +44,6 @@ const Profile = () => {
         lookingFor: ''
     });
 
-    // Jelszó váltás állapotok
     const [showPasswordChange, setShowPasswordChange] = useState(false);
     const [passwordData, setPasswordData] = useState({
         oldPassword: '',
@@ -34,13 +54,12 @@ const Profile = () => {
     const [passwordError, setPasswordError] = useState('');
     const [passwordSuccess, setPasswordSuccess] = useState('');
 
-    // Életkor korlátozás: minimum 16 év
     const today = new Date();
     const sixteenYearsAgo = new Date(today.getFullYear() - 16, today.getMonth(), today.getDate());
     const maxDate = sixteenYearsAgo.toISOString().split('T')[0];
 
     useEffect(() => {
-        // Megvárjuk, amíg az AuthContext befejezi a token ellenőrzést
+
         if (authLoading) return;
 
         if (!isAuthenticated) {
@@ -49,7 +68,49 @@ const Profile = () => {
         }
 
         fetchProfileData();
-    }, [isAuthenticated, authLoading, navigate]);
+        fetchEvents();
+    }, [isAuthenticated, authLoading, navigate, fetchEvents]);
+
+    // Helper functions for formatting (replicated from useEvents for consistency)
+    const isDummyImage = (url) => {
+        if (!url) return true;
+        const low = url.toLowerCase();
+        return low.includes('rocknight') || low.includes('jazz.jpg') || low.includes('techno') || low.includes('placeholder');
+    };
+
+    const extractCityFromAddress = (address) => {
+        if (!address) return 'Borsod';
+        const addrLower = address.toLowerCase();
+        if (addrLower.includes('miskolc')) return 'Miskolc';
+        if (addrLower.includes('mezőkövesd')) return 'Mezőkövesd';
+        if (addrLower.includes('ózd')) return 'Ózd';
+        if (addrLower.includes('sárospatak')) return 'Sárospatak';
+        if (addrLower.includes('budapest')) return 'Budapest';
+        const parts = address.split(',');
+        return parts[0].trim();
+    };
+
+    const formatDate = (dateTime) => {
+        if (!dateTime) return 'Hamarosan';
+        try {
+            const date = new Date(dateTime);
+            if (isNaN(date.getTime())) return dateTime;
+            return date.toLocaleDateString('hu-HU', {
+                year: 'numeric', month: 'long', day: 'numeric'
+            });
+        } catch (e) { return dateTime; }
+    };
+
+    const getPlaceholderImage = (index) => {
+        const images = [
+            'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600',
+            'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=600',
+            'https://images.unsplash.com/photo-1459749411177-042180ce673c?w=600',
+            'https://images.unsplash.com/photo-1514525253361-bee8718a7439?w=600',
+            'https://images.unsplash.com/photo-1505236858219-8359eb29e329?w=600'
+        ];
+        return images[index % images.length];
+    };
 
     const fetchProfileData = async () => {
         try {
@@ -57,7 +118,7 @@ const Profile = () => {
             setError(null);
             const response = await apiClient.get('/api/User/me');
             setProfileData(response.data);
-            // Szerkesztési adatok alaphelyzetbe állítása
+
             setEditData({
                 email: response.data.email || '',
                 displayName: response.data.displayName || '',
@@ -78,11 +139,27 @@ const Profile = () => {
         const file = e.target.files[0];
         if (!file) return;
 
+
+        if (!file.type.startsWith('image/')) {
+            setError('Csak képfájlok feltöltése engedélyezett (jpg, png, stb.)!');
+            setTimeout(() => setError(null), 5000);
+            return;
+        }
+
+
+        const maxSize = 5 * 1024 * 1024;
+        if (file.size > maxSize) {
+            setError('A kép mérete túl nagy! A maximális megengedett méret 5MB.');
+            setTimeout(() => setError(null), 5000);
+            return;
+        }
+
         const formData = new FormData();
         formData.append('file', file);
 
         try {
             setProfileLoading(true);
+            setError(null);
             await apiClient.post('/api/User/avatar', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
@@ -91,7 +168,24 @@ const Profile = () => {
             setTimeout(() => setSuccessMessage(null), 3000);
         } catch (err) {
             console.error('Error uploading avatar:', err);
-            setError('Hiba történt a kép feltöltése során.');
+
+            let errorMessage = 'Hiba történt a kép feltöltése során.';
+            const responseData = err.response?.data;
+
+            if (err.response?.status === 500) {
+                errorMessage = 'Szerveroldali hiba történt. Kérjük, próbáld meg később vagy válassz egy másik képet.';
+            } else if (typeof responseData === 'string') {
+                if (responseData.length > 200 || responseData.includes('<!DOCTYPE html>') || responseData.includes('<html>')) {
+                    errorMessage = 'A fájl nem támogatott vagy túl nagy. Kérjük, válassz egy másik képet.';
+                } else {
+                    errorMessage = responseData;
+                }
+            } else if (responseData?.message) {
+                errorMessage = responseData.message;
+            }
+
+            setError(errorMessage);
+            setTimeout(() => setError(null), 7000);
         } finally {
             setProfileLoading(false);
         }
@@ -109,7 +203,21 @@ const Profile = () => {
             setTimeout(() => setSuccessMessage(null), 3000);
         } catch (err) {
             console.error('Error updating profile:', err);
-            setError(err.response?.data || 'Hiba történt a frissítés során.');
+
+            let errorMessage = 'Hiba történt a frissítés során.';
+            const responseData = err.response?.data;
+
+            if (err.response?.status === 500) {
+                errorMessage = 'Szerveroldali hiba történt a mentés során.';
+            } else if (typeof responseData === 'string') {
+                if (responseData.length > 200 || responseData.includes('<!DOCTYPE html>') || responseData.includes('<html>')) {
+                    errorMessage = 'A mentés sikertelen volt. Kérjük, ellenőrizd az adatokat.';
+                } else {
+                    errorMessage = responseData;
+                }
+            }
+
+            setError(errorMessage);
         } finally {
             setProfileLoading(false);
         }
@@ -194,12 +302,13 @@ const Profile = () => {
         );
     }
 
-    if (error) {
+    if (error && !profileData) {
         return (
             <section className="page active profile-page">
                 <div className="container">
                     <div className="profile-container">
                         <div style={{ textAlign: 'center', padding: '50px', color: '#ff4444' }}>
+                            <i className="fas fa-exclamation-triangle" style={{ fontSize: '3rem', marginBottom: '20px' }}></i>
                             <p>{error}</p>
                             <button
                                 className="btn-pulse"
@@ -282,16 +391,44 @@ const Profile = () => {
 
                     {successMessage && (
                         <div style={{
-                            backgroundColor: '#00C851',
+                            backgroundColor: 'rgba(0, 200, 81, 0.9)',
                             color: 'white',
                             padding: '15px',
                             borderRadius: '10px',
                             marginBottom: '20px',
-                            textAlign: 'center'
+                            textAlign: 'center',
+                            border: '1px solid rgba(255, 255, 255, 0.2)',
+                            boxShadow: '0 4px 15px rgba(0, 200, 81, 0.3)',
+                            animation: 'slideDown 0.3s ease-out'
                         }}>
+                            <i className="fas fa-check-circle" style={{ marginRight: '10px' }}></i>
                             {successMessage}
                         </div>
                     )}
+
+                    {error && profileData && (
+                        <div style={{
+                            backgroundColor: 'rgba(255, 68, 68, 0.9)',
+                            color: 'white',
+                            padding: '15px',
+                            borderRadius: '10px',
+                            marginBottom: '20px',
+                            textAlign: 'center',
+                            border: '1px solid rgba(255, 255, 255, 0.2)',
+                            boxShadow: '0 4px 15px rgba(255, 68, 68, 0.3)',
+                            animation: 'slideDown 0.3s ease-out'
+                        }}>
+                            <i className="fas fa-exclamation-circle" style={{ marginRight: '10px' }}></i>
+                            {error}
+                        </div>
+                    )}
+
+                    <style>{`
+                        @keyframes slideDown {
+                            from { transform: translateY(-20px); opacity: 0; }
+                            to { transform: translateY(0); opacity: 1; }
+                        }
+                    `}</style>
 
                     <div className="profile-content">
                         {isEditing ? (
@@ -465,11 +602,94 @@ const Profile = () => {
                                         </div>
                                     )}
                                 </div>
+
+                                <div className="detail-section my-events-section">
+                                    <h3>Események, ahol ott leszek</h3>
+                                    {myEventsLoading ? (
+                                        <div className="mini-loader">Betöltés...</div>
+                                    ) : myUpcomingEvents.length > 0 ? (
+                                        <div className="profile-events-grid">
+                                            {myUpcomingEvents.map(event => (
+                                                <EventCard
+                                                    key={event.id}
+                                                    event={event}
+                                                    isAttending={true}
+                                                    attendeeCount={event.attendeeCount ?? 0}
+                                                    isFavorite={event.isFavorite ?? false}
+                                                    onReviewClick={handleReviewClick}
+                                                />
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div className="no-events-placeholder">
+                                            <i className="fas fa-calendar-times"></i>
+                                            <p>Nincs közelgő eseményed.</p>
+                                            <button className="btn-pulse" onClick={() => navigate('/events')}>Böngéssz az események között</button>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="detail-section my-events-section" style={{ marginTop: '30px' }}>
+                                    <h3>Események amiken részt vettem <i className="fas fa-history" style={{ color: '#bc13fe', marginLeft: '8px' }}></i></h3>
+                                    {myEventsLoading ? (
+                                        <div className="mini-loader">Betöltés...</div>
+                                    ) : myPastEvents.length > 0 ? (
+                                        <div className="profile-events-grid">
+                                            {myPastEvents.map(event => (
+                                                <EventCard
+                                                    key={`past-${event.id}`}
+                                                    event={event}
+                                                    isAttending={true}
+                                                    attendeeCount={event.attendeeCount ?? 0}
+                                                    isFavorite={event.isFavorite ?? false}
+                                                    onReviewClick={handleReviewClick}
+                                                />
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div className="no-events-placeholder">
+                                            <i className="fas fa-history" style={{ fontSize: '3rem', color: 'rgba(255, 255, 255, 0.2)', marginBottom: '15px' }}></i>
+                                            <p>Még nem vettél részt egyetlen eseményen sem.</p>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="detail-section my-events-section" style={{ marginTop: '30px' }}>
+                                    <h3>Kedvenc eseményeim <i className="fas fa-heart" style={{ color: '#bc13fe', marginLeft: '8px' }}></i></h3>
+                                    {myFavoritesLoading ? (
+                                        <div className="mini-loader">Betöltés...</div>
+                                    ) : myFavorites.length > 0 ? (
+                                        <div className="profile-events-grid">
+                                            {myFavorites.map(event => (
+                                                <EventCard
+                                                    key={`fav-${event.id}`}
+                                                    event={event}
+                                                    isFavorite={true}
+                                                    isAttending={event.isAttending ?? false}
+                                                    attendeeCount={event.attendeeCount ?? 0}
+                                                    onReviewClick={handleReviewClick}
+                                                />
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div className="no-events-placeholder">
+                                            <i className="far fa-heart" style={{ fontSize: '3rem', color: 'rgba(255, 255, 255, 0.2)', marginBottom: '15px' }}></i>
+                                            <p>Még nincsenek kedvenc eseményeid.</p>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         )}
                     </div>
                 </div>
             </div>
+
+            <ReviewModal
+                isOpen={showReviewModal}
+                onClose={() => setShowReviewModal(false)}
+                event={eventToReview}
+                onReviewSuccess={handleReviewSuccess}
+            />
         </section>
     );
 };
