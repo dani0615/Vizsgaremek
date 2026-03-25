@@ -26,7 +26,21 @@ export const AuthProvider = ({ children }) => {
                     logout();
                 } else {
                     // Token valid
-                    setUser(JSON.parse(storedUser));
+                    const userData = JSON.parse(storedUser);
+                    
+                    // Mindig a tokenből vesszük a kritikus adatokat, 
+                    // így hiába írják át a localStorage-ben a role-t, 
+                    // az alkalmazás indulásakor a token szerinti valós értékkel írjuk felül.
+                    const actualRole = decoded["role"] || decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+                    const actualUserId = decoded["nameid"] || decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/nameidentifier"] || decoded["sub"];
+                    const actualUsername = decoded["unique_name"] || decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/name"] || decoded["name"];
+
+                    if (actualRole) userData.role = actualRole;
+                    if (actualUserId) userData.userId = parseInt(actualUserId);
+                    if (actualUsername) userData.username = actualUsername;
+
+                    localStorage.setItem('user', JSON.stringify(userData));
+                    setUser(userData);
                 }
             } catch (err) {
                 logout();
@@ -41,13 +55,21 @@ export const AuthProvider = ({ children }) => {
         try {
             const response = await apiClient.post('/Auth/login', { identifier, password });
 
-            const { token, username, role } = response.data;
+            const { token, userId, username, role, displayName, profilePictureBase64 } = response.data;
 
             if (token) {
                 localStorage.setItem('token', token);
-                const userData = { username, role };
-                localStorage.setItem('user', JSON.stringify(userData));
-                setUser(userData);
+                
+                const profileData = { 
+                    userId: parseInt(userId), 
+                    username, 
+                    role,
+                    name: displayName || username,
+                    profilePictureBase64: profilePictureBase64
+                };
+                
+                localStorage.setItem('user', JSON.stringify(profileData));
+                setUser(profileData);
                 return { success: true };
             } else {
                 setError('Nem érkezett token a szervertől.');
@@ -66,7 +88,7 @@ export const AuthProvider = ({ children }) => {
         setLoading(true);
         setError(null);
         try {
-            await apiClient.post('/api/Registry', {
+            const response = await apiClient.post('/api/Registry', {
                 username,
                 email,
                 password,
@@ -75,9 +97,8 @@ export const AuthProvider = ({ children }) => {
                 lookingFor,
                 displayName
             });
-            // Sikeres regisztráció után automatikusan bejelentkeztethetnénk,
-            // de most csak visszaadjuk a sikert.
-            return { success: true };
+            // Visszaadjuk a valós válaszüzenetet (response.data)
+            return { success: true, data: response.data };
         } catch (err) {
             const errorMessage = err.response?.data || 'Hiba a regisztráció során.';
             setError(errorMessage);
@@ -92,6 +113,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('user');
         setUser(null);
         setError(null);
+        window.location.reload();
     };
 
     const value = {
