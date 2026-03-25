@@ -349,6 +349,48 @@ input[type="date"]::after {
     letter-spacing: 1px;
 }
 
+/* My Events Section in Profile */
+.my-events-section {
+    margin-top: 20px;
+}
+
+.profile-events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 25px;
+    margin-top: 20px;
+}
+
+.no-events-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px dashed rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    text-align: center;
+}
+
+.no-events-placeholder i {
+    font-size: 3rem;
+    color: rgba(188, 19, 254, 0.3);
+    margin-bottom: 20px;
+}
+
+.no-events-placeholder p {
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 25px;
+}
+
+.mini-loader {
+    text-align: center;
+    padding: 30px;
+    color: var(--primary);
+    font-weight: 600;
+}
+
 @media (max-width: 768px) {
     .profile-header {
         padding: 30px 20px;
@@ -403,6 +445,10 @@ input[type="date"]::after {
     }
 
     .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-events-grid {
         grid-template-columns: 1fr;
     }
 }

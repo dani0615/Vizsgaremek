@@ -17,6 +17,62 @@
     border-radius: 8px;
 }
 
+/* ── Oldal fejléc (cím + gomb sor) ──────────────────────── */
+.events-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.events-page-header .section-title {
+    margin-bottom: 0;
+}
+
+/* ── Új buli gomb ────────────────────────────────────────── */
+.btn-create-event {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #bc13fe, #7b00d4);
+    border: none;
+    border-radius: 50px;
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    box-shadow: 0 4px 20px rgba(188, 19, 254, 0.4);
+    transition: all 0.25s;
+    letter-spacing: 0.3px;
+}
+
+.btn-create-event i {
+    font-size: 1.1rem;
+}
+
+/* ── Admin / Organizer infó badge ────────────────────────── */
+.events-role-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(188, 19, 254, 0.08);
+    border: 1px solid rgba(188, 19, 254, 0.25);
+    border-radius: 10px;
+    padding: 10px 16px;
+    margin-bottom: 22px;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.events-role-badge i {
+    color: #bc13fe;
+    font-size: 0.95rem;
+}
+
 /* Events Page Premium Styles */
 .filters-premium {
     display: grid;
@@ -133,5 +189,15 @@
     .filters input,
     .filters select {
         width: 100%;
+    }
+
+    .events-page-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .btn-create-event {
+        width: 100%;
+        justify-content: center;
     }
 }
