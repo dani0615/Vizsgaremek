@@ -1,11 +1,14 @@
 import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { MatchNotificationProvider } from './context/MatchNotificationContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import AgeGate from './components/AgeGate';
 import AnimatedRoutes from './components/AnimatedRoutes';
 import PartyBackground from './components/3d/PartyParticles';
+import MatchToastContainer from './components/MatchToastContainer';
+import ScrollToTop from './components/ScrollToTop';
 import './App.css'; // Global CSS a App.css-ből
 import './index.css'; // További globális CSS az index.css-ből
 
@@ -13,15 +16,19 @@ function App() {
     return (
         <AuthProvider>
             <Router>
-                <div className="app-wrapper">
-                    <PartyBackground />
-                    <AgeGate />
-                    <Navbar />
-                    <main>
-                        <AnimatedRoutes />
-                    </main>
-                    <Footer />
-                </div>
+                <ScrollToTop />
+                <MatchNotificationProvider>
+                    <div className="app-wrapper">
+                        <PartyBackground />
+                        <AgeGate />
+                        <Navbar />
+                        <MatchToastContainer />
+                        <main>
+                            <AnimatedRoutes />
+                        </main>
+                        <Footer />
+                    </div>
+                </MatchNotificationProvider>
             </Router>
         </AuthProvider>
     );
