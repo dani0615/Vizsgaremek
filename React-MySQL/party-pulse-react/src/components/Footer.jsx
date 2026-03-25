@@ -38,20 +38,20 @@ const Footer = () => {
                 <div className="footer-section">
                     <h4>Információ</h4>
                     <ul className="footer-links">
-                        <li><a href="#">Rólunk</a></li>
-                        <li><a href="#">Esemény beküldése</a></li>
-                        <li><a href="#">Kapcsolat</a></li>
-                        <li><a href="#">Partnerprogram</a></li>
+                        <li><Link to="/about">Rólunk</Link></li>
+                        <li><Link to="/submit-event">Esemény beküldése</Link></li>
+                        <li><Link to="/contact">Kapcsolat</Link></li>
+                        <li><Link to="/partners">Partnerprogram</Link></li>
                     </ul>
                 </div>
 
                 <div className="footer-section">
                     <h4>Jogi tudnivalók</h4>
                     <ul className="footer-links">
-                        <li><a href="#">ÁSZF</a></li>
-                        <li><a href="#">Adatvédelmi nyilatkozat</a></li>
-                        <li><a href="#">Cookie tájékoztató</a></li>
-                        <li><a href="#">Felelősségvállalás</a></li>
+                        <li><Link to="/terms">ÁSZF</Link></li>
+                        <li><Link to="/privacy">Adatvédelmi nyilatkozat</Link></li>
+                        <li><Link to="/cookies">Cookie tájékoztató</Link></li>
+                        <li><Link to="/disclaimer">Felelősségvállalás</Link></li>
                     </ul>
                 </div>
             </div>

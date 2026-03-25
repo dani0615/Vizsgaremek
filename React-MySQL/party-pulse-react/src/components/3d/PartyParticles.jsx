@@ -6,16 +6,16 @@ import * as random from 'maath/random/dist/maath-random.esm';
 const PartyBackground = ({ containerStyle = {}, count = 5000, color = "#bc13fe" }) => {
     return (
         <div style={{
-            position: 'absolute',
+            position: 'fixed',
             top: 0,
             left: 0,
             width: '100%',
             height: '100%',
-            zIndex: 0,
+            zIndex: -1,
             pointerEvents: 'none',
             ...containerStyle
         }}>
-            <Canvas camera={{ position: [0, 0, 1] }}>
+            <Canvas camera={{ position: [0, 0, 1] }} style={{ pointerEvents: 'none' }}>
                 <Stars color={color} count={count} />
             </Canvas>
         </div>

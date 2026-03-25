@@ -13,14 +13,14 @@ const AgeGate = () => {
             return;
         }
 
-        const ageVerified = sessionStorage.getItem('ageVerified');
+        const ageVerified = localStorage.getItem('ageVerified');
         if (!ageVerified) {
             setIsVisible(true);
         }
     }, [isAuthenticated]);
 
     const handleConfirm = () => {
-        sessionStorage.setItem('ageVerified', 'true');
+        localStorage.setItem('ageVerified', 'true');
         setIsVisible(false);
     };
 
