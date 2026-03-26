@@ -54,6 +54,8 @@ CREATE TABLE Events (
     MaxAttendees  INT NULL,
     IsPublic      BOOLEAN DEFAULT TRUE,
     CreatedAt     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    IsFeatured BOOLEAN NOT NULL DEFAULT FALSE,
+    
 
     FOREIGN KEY (OrganizerID) REFERENCES Users(UserID) ON DELETE RESTRICT,
     SPATIAL INDEX idx_location (Location),
