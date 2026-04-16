@@ -37,14 +37,19 @@ const Messages = () => {
     if (!isAuthenticated) return null;
 
     return (
-        <div className="messages-page page">
-            <div className="messages-header">
-                <h1>Üzenetek</h1>
-                <p>Beszélgess a matcheiddel és szervezzetek közös bulit!</p>
-                <button className="btn-new-chat" onClick={() => navigate('/chat/new')}>
-                    Új beszélgetés indítása
-                </button>
-            </div>
+        <div className="messages-page page" style={{ position: 'relative', overflow: 'hidden', minHeight: '100vh' }}>
+            {/* Background glowing decorations */}
+            <div style={{ position: 'absolute', top: '5%', left: '15%', width: '400px', height: '400px', background: 'var(--primary)', filter: 'blur(180px)', opacity: '0.15', borderRadius: '50%', zIndex: 0, pointerEvents: 'none' }}></div>
+            <div style={{ position: 'absolute', bottom: '15%', right: '10%', width: '350px', height: '350px', background: 'var(--accent)', filter: 'blur(160px)', opacity: '0.12', borderRadius: '50%', zIndex: 0, pointerEvents: 'none' }}></div>
+
+            <div className="messages-container" style={{ position: 'relative', zIndex: 1, paddingBottom: '4rem' }}>
+                <div className="messages-header" style={{ textAlign: 'center', marginBottom: '4rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <h1 style={{ fontSize: '3rem', fontWeight: '900', letterSpacing: '-1px', textShadow: '0 4px 20px rgba(188, 19, 254, 0.4)' }}>Üzenetek 💬</h1>
+                    <p style={{ fontSize: '1.1rem', color: 'rgba(255, 255, 255, 0.5)', marginTop: '0.5rem', marginBottom: '2rem' }}>Beszélgess a matcheiddel és szervezzetek közös bulit!</p>
+                    <button className="btn-new-chat" onClick={() => navigate('/chat/new')} style={{ padding: '14px 30px', fontSize: '1.05rem', boxShadow: '0 8px 30px rgba(188, 19, 254, 0.35)' }}>
+                        ✨ Új beszélgetés indítása
+                    </button>
+                </div>
 
             {loading ? (
                 <div className="buddies-loading">
@@ -65,7 +70,7 @@ const Messages = () => {
                     </Link>
                 </div>
             ) : (
-                <div className="messages-list">
+                <div className="messages-list" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: '1.5rem', maxWidth: '900px', margin: '0 auto', padding: '0 2rem' }}>
                     {matches.map((match) => (
                         <Link 
                             to={`/chat/${match.matchID}`} 
@@ -96,6 +101,7 @@ const Messages = () => {
                     ))}
                 </div>
             )}
+            </div>
         </div>
     );
 };

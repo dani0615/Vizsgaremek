@@ -1,0 +1,331 @@
+/* ============================================================
+   PartyPulseTitle3D — 3D animated hero title
+   GPU-accelerated, pointer-events fixed, mobile optimized
+   ============================================================ */
+
+/* ── Wrapper ──────────────────────────────────────────────── */
+.party-pulse-title-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 20px 0 40px;
+    pointer-events: auto;
+    /* Saját paint layer — izolálja a többi elemtől */
+    contain: layout style;
+    /* GPU réteg promóció */
+    transform: translateZ(0);
+    will-change: transform;
+}
+
+/* ── 3D stage ─────────────────────────────────────────────── */
+.title-3d-stage {
+    position: relative;
+    display: inline-block;
+    /* GPU compositing layer */
+    will-change: transform;
+    transform: translateZ(0);
+}
+
+/* ── Heading ──────────────────────────────────────────────── */
+.title-heading {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(4rem, 13vw, 8rem);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -3px;
+    line-height: 1.1;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 0 0.18em;
+    margin: 0;
+    transform-style: preserve-3d;
+    /* CSS öröklés tiltása hogy ne ütközzön */
+    background: none !important;
+    -webkit-text-fill-color: unset !important;
+    animation: none !important;
+    filter: none !important;
+    pointer-events: auto;
+}
+
+.title-word {
+    display: inline-flex;
+    transform-style: preserve-3d;
+    pointer-events: auto;
+}
+
+.title-space {
+    display: inline-block;
+    width: 0.25em;
+    pointer-events: none;
+}
+
+/* ── Individual letter ────────────────────────────────────── */
+.title-letter {
+    position: relative;
+    cursor: default;
+    transform-style: preserve-3d;
+    /* HIT AREA: a motion.span maga a kattintható felület */
+    pointer-events: auto;
+
+    /* Gradient fill */
+    background: linear-gradient(
+        135deg,
+        #bc13fe 0%,
+        #00f3ff 35%,
+        #ff00de 65%,
+        #f3ff00 85%,
+        #bc13fe 100%
+    );
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: letter-gradient-shift 6s ease infinite;
+
+    /* Neon glow — kevesebb réteg = gyorsabb */
+    filter: drop-shadow(0 0 6px rgba(188, 19, 254, 0.7))
+            drop-shadow(0 0 18px rgba(0, 243, 255, 0.35));
+    transition: filter 0.2s ease;
+
+    /* GPU compositor layer minden betűnek */
+    will-change: transform, filter;
+}
+
+.title-letter:hover {
+    filter: drop-shadow(0 0 14px rgba(188, 19, 254, 1))
+            drop-shadow(0 0 32px rgba(0, 243, 255, 0.9))
+            drop-shadow(0 0 56px rgba(255, 0, 222, 0.5));
+}
+
+@keyframes letter-gradient-shift {
+    0%   { background-position: 0%   50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0%   50%; }
+}
+
+/* ── Letter face (a tényleges text, ez a hit-area alapja) ─── */
+.letter-face {
+    position: relative;
+    display: block;
+    /* FONTOS: pointer-events auto — ez fogja a hoverre */
+    pointer-events: auto;
+    /* GPU layer */
+    transform: translateZ(0);
+}
+
+/* ── 3D depth extrude rétegek (csak vizuális, NEM ütközhet az egérrel) ── */
+.letter-depth {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    /* KRITIKUS: ezek a rétegek ne blokkolják az egereseményeket */
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-text-fill-color: rgba(80, 0, 160, 0.5);
+    color: rgba(80, 0, 160, 0.5);
+    background: none;
+    /* Minden réteg saját GPU layer-en */
+    will-change: transform;
+    /* Pixel snapping elkerülése */
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+/* ── Shine / reflection réteg ─────────────────────────────── */
+.letter-shine {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    /* Ez sem kap pointer-events-t */
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+    background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.5) 0%,
+        rgba(255, 255, 255, 0.0) 55%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transform: translateZ(2px);
+    mix-blend-mode: overlay;
+    will-change: transform;
+}
+
+/* ── Scan shimmer ─────────────────────────────────────────── */
+.title-scan-line {
+    position: absolute;
+    top: 0;
+    left: -10%;
+    width: 30%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.1) 50%,
+        transparent 100%
+    );
+    pointer-events: none;
+    animation: scan-sweep 4s ease-in-out infinite;
+    border-radius: 50%;
+    /* GPU réteg */
+    will-change: left, opacity;
+    transform: translateZ(0);
+}
+
+@keyframes scan-sweep {
+    0%   { left: -30%; opacity: 0; }
+    10%  { opacity: 1; }
+    90%  { opacity: 1; }
+    100% { left: 110%; opacity: 0; }
+}
+
+/* ── Ambient glow orbs ────────────────────────────────────── */
+.title-glow-orb {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    filter: blur(55px);
+    opacity: 0.35;
+    animation: orb-breathe 5s ease-in-out infinite alternate;
+    /* CSS animáció GPU-n fut */
+    will-change: opacity, transform;
+}
+
+.title-glow-orb--purple {
+    width: 320px;
+    height: 200px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, #bc13fe, transparent 70%);
+    animation-duration: 5s;
+}
+
+.title-glow-orb--cyan {
+    width: 200px;
+    height: 160px;
+    top: 30%;
+    left: 15%;
+    background: radial-gradient(circle, #00f3ff, transparent 70%);
+    animation-duration: 7s;
+    animation-delay: -2s;
+    animation-name: orb-breathe-plain;
+}
+
+.title-glow-orb--pink {
+    width: 220px;
+    height: 160px;
+    top: 20%;
+    right: 10%;
+    background: radial-gradient(circle, #ff00de, transparent 70%);
+    animation-duration: 6s;
+    animation-delay: -1s;
+    animation-name: orb-breathe-plain;
+}
+
+@keyframes orb-breathe {
+    from { opacity: 0.22; transform: translate(-50%, -50%) scale(0.9); }
+    to   { opacity: 0.48; transform: translate(-50%, -50%) scale(1.1); }
+}
+
+@keyframes orb-breathe-plain {
+    from { opacity: 0.18; transform: scale(0.9); }
+    to   { opacity: 0.42; transform: scale(1.1); }
+}
+
+/* ── Spark particles ──────────────────────────────────────── */
+.title-sparks {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: visible;
+}
+
+.title-spark {
+    position: absolute;
+    bottom: 10%;
+    left: var(--x, 50%);
+    width: var(--size, 4px);
+    height: var(--size, 4px);
+    border-radius: 50%;
+    background: conic-gradient(#bc13fe, #00f3ff, #ff00de, #f3ff00, #bc13fe);
+    opacity: 0;
+    animation: spark-rise var(--duration, 3s) ease-out var(--delay, 0s) infinite;
+    /* GPU compositing */
+    will-change: transform, opacity;
+    transform: translateZ(0);
+}
+
+@keyframes spark-rise {
+    0%   { transform: translateY(0)     scale(1);   opacity: 0; }
+    10%  { opacity: 1; }
+    60%  { transform: translateY(-70px) scale(1.3); opacity: 0.8; }
+    100% { transform: translateY(-130px) scale(0);  opacity: 0; }
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .title-heading {
+        font-size: clamp(3rem, 16vw, 5rem);
+        letter-spacing: -1px;
+    }
+
+    .title-glow-orb--purple { width: 200px; height: 140px; }
+    .title-glow-orb--cyan   { width: 140px; height: 110px; }
+    .title-glow-orb--pink   { width: 150px; height: 110px; }
+}
+
+@media (max-width: 480px) {
+    .title-heading {
+        font-size: clamp(2.5rem, 18vw, 4rem);
+        gap: 0;
+    }
+}
+
+/* ── Mobil: csökkentett animáció (prefers-reduced-motion) ─── */
+@media (prefers-reduced-motion: reduce) {
+    .title-letter,
+    .title-spark,
+    .title-scan-line,
+    .title-glow-orb {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+/* ── Mobil (touch-screen): kikapcsoljuk a nehéz effekteket ── */
+@media (pointer: coarse) {
+    /* Kevesebb DOM komplexitás: a depth rétegek eltűnnek */
+    .letter-depth {
+        display: none;
+    }
+
+    /* Egyszerűsített glow — blur() GPU-n drága mobilon */
+    .title-letter {
+        filter: drop-shadow(0 0 6px rgba(188, 19, 254, 0.8));
+        will-change: auto; /* Nem foglalunk le GPU layert feleslegesen */
+    }
+
+    .title-glow-orb {
+        filter: blur(35px);
+        opacity: 0.25;
+    }
+
+    /* Sparkok száma CSS-ből nem csökkenthető, de az animáció lassabb/gyengébb */
+    .title-spark {
+        opacity: 0;
+        animation-duration: calc(var(--duration, 3s) * 1.5);
+    }
+}

@@ -102,15 +102,21 @@ const EventCard = ({ event, onEdit, onDelete, canEdit, canDelete, onCardClick,
                 <div className="event-img-overlay"></div>
                 <div className="event-type-badge">{event.type}</div>
                 
+                {event.isFeatured && (
+                    <div className="event-featured-badge">
+                        <i className="fas fa-fire"></i> Kiemelt
+                    </div>
+                )}
+
                 {isAttending && (
-                    <div className="event-going-badge">
+                    <div className={`event-going-badge ${event.isFeatured ? 'has-featured' : ''}`}>
                         <i className="fas fa-check-circle"></i> Megyek!
                     </div>
                 )}
 
                 {/* Admin controls overlay */}
                 {(canEdit || canDelete) && (
-                    <div className="event-admin-overlay">
+                    <div className={`event-admin-overlay ${event.isFeatured && isAttending ? 'has-both' : event.isFeatured ? 'has-featured' : ''}`}>
                         {canEdit && (
                             <button
                                 className="admin-btn admin-btn--edit"

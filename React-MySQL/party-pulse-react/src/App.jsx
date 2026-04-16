@@ -7,6 +7,7 @@ import Footer from './components/Footer';
 import AgeGate from './components/AgeGate';
 import AnimatedRoutes from './components/AnimatedRoutes';
 import PartyBackground from './components/3d/PartyParticles';
+import ScrollBackground3D from './components/3d/ScrollBackground3D';
 import MatchToastContainer from './components/MatchToastContainer';
 import ScrollToTop from './components/ScrollToTop';
 import './App.css'; // Global CSS a App.css-ből
@@ -20,6 +21,7 @@ function App() {
                 <MatchNotificationProvider>
                     <div className="app-wrapper">
                         <PartyBackground />
+                        <ScrollBackground3D />
                         <AgeGate />
                         <Navbar />
                         <MatchToastContainer />

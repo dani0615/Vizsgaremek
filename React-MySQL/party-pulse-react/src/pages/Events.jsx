@@ -8,10 +8,42 @@ import ReviewModal from '../components/ReviewModal';
 import { useEvents } from '../hooks/useEvents';
 import { useAuth } from '../context/AuthContext';
 import { apiClient } from '../services/apiConfig';
+import GlassSelect from '../components/GlassSelect';
 import '../css/Events.css';
+
+const CITY_OPTIONS = [
+    { value: '', label: 'Összes Város' },
+    { value: 'Miskolc', label: 'Miskolc' },
+    { value: 'Mezőkövesd', label: 'Mezőkövesd' },
+    { value: 'Ózd', label: 'Ózd' },
+    { value: 'Sárospatak', label: 'Sárospatak' },
+];
+
+const STYLE_OPTIONS = [
+    { value: '', label: 'Összes Stílus' },
+    { value: 'techno', label: 'Techno' },
+    { value: 'house', label: 'House' },
+    { value: 'pop', label: 'Pop' },
+    { value: 'rock', label: 'Rock' },
+    { value: 'hiphop', label: 'Hip-Hop' },
+    { value: 'electronic', label: 'Electronic' },
+    { value: 'jazz', label: 'Jazz' },
+    { value: 'metal', label: 'Metal' },
+    { value: 'latin', label: 'Latin' },
+    { value: 'drumandbass', label: 'Drum and Bass' },
+    { value: 'other', label: 'Egyéb' },
+];
 
 // Jogosult szerepkörök az esemény létrehozáshoz
 const CAN_CREATE_ROLES = ['admin', 'organizer'];
+
+const CITY_COORDINATES = {
+    'Miskolc': [20.7784, 48.1035],
+    'Mezőkövesd': [20.5724, 47.8105],
+    'Ózd': [20.2858, 48.2185],
+    'Sárospatak': [21.5658, 48.3184],
+    'default': [20.7784, 48.1035]
+};
 
 const Events = () => {
     const [searchParams] = useSearchParams();
@@ -51,7 +83,7 @@ const Events = () => {
             .sort((a, b) => a[0].localeCompare(b[0]))
             .map(([month, count]) => ({
                 value: month,
-                label: new Date(month + '-01').toLocaleString('hu-HU', { year: 'numeric', month: 'long' }),
+                label: `${new Date(month + '-01').toLocaleString('hu-HU', { year: 'numeric', month: 'long' })} (${count} buli)`,
                 count
             }));
     }, [allEvents]);
@@ -59,8 +91,13 @@ const Events = () => {
     // Térkép középpont frissítése és szűrés
     useEffect(() => {
         const filtered = allEvents.filter(event => {
-            const matchesKeyword = (event.name?.toLowerCase().includes(keyword.toLowerCase()) ||
-                event.desc?.toLowerCase().includes(keyword.toLowerCase()));
+            const searchStr = keyword.toLowerCase();
+            const matchesKeyword = (
+                event.name?.toLowerCase().includes(searchStr) ||
+                event.desc?.toLowerCase().includes(searchStr) ||
+                event.city?.toLowerCase().includes(searchStr) ||
+                event.place?.toLowerCase().includes(searchStr)
+            );
             const matchesCity = (city === '' || event.city === city);
             const matchesMonth = (selectedMonth === '' || (event.date && event.date.startsWith(selectedMonth)));
             const matchesType = (type === '' || event.type === type);
@@ -69,12 +106,19 @@ const Events = () => {
         });
         setFilteredEvents(filtered);
 
-        // Ha van szűrt eredmény és város, fókuszáljunk az elsőre
-        if (filtered.length > 0 && filtered[0].lat !== null && filtered[0].lon !== null) {
+        // Térkép szinkronizáció
+        if (city && CITY_COORDINATES[city]) {
+            // Ha várost választottunk, fókuszáljunk a városra
+            setMapCenter(CITY_COORDINATES[city]);
+            setMapZoom(13);
+        } else if (filtered.length > 0 && filtered[0].lat !== null && filtered[0].lon !== null) {
+            // Ha van találat (de nincs konkrét város szűrő), fókuszáljunk az első találatra
             setMapCenter([filtered[0].lon, filtered[0].lat]);
-            setMapZoom(city ? 13 : 10);
-        } else {
-            setMapZoom(city ? 13 : 10);
+            setMapZoom(11);
+        } else if (!city && !keyword) {
+            // Reset alaphelyzetbe
+            setMapCenter(CITY_COORDINATES['default']);
+            setMapZoom(10);
         }
     }, [keyword, city, selectedMonth, type, allEvents, listTab]);
 
@@ -183,49 +227,32 @@ const Events = () => {
                         <label>Keresés</label>
                         <input
                             type="text"
-                            placeholder="Kulcsszó (pl. Techno, DJ)..."
+                            placeholder="Kulcsszó, város vagy helyszín..."
                             value={keyword}
                             onChange={(e) => setKeyword(e.target.value)}
                         />
                     </div>
-                    <div className="filter-group">
-                        <label>Város</label>
-                        <select value={city} onChange={(e) => setCity(e.target.value)}>
-                            <option value="">Összes Város</option>
-                            <option value="Miskolc">Miskolc</option>
-                            <option value="Mezőkövesd">Mezőkövesd</option>
-                            <option value="Ózd">Ózd</option>
-                            <option value="Sárospatak">Sárospatak</option>
-                        </select>
-                    </div>
-                    <div className="filter-group">
-                        <label>Időszak</label>
-                        <select value={selectedMonth} onChange={(e) => setSelectedMonth(e.target.value)}>
-                            <option value="">Bármikor</option>
-                            {months.map(m => (
-                                <option key={m.value} value={m.value}>
-                                    {m.label} ({m.count} buli)
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                    <div className="filter-group">
-                        <label>Stílus</label>
-                        <select value={type} onChange={(e) => setType(e.target.value)}>
-                            <option value="">Összes Stílus</option>
-                            <option value="techno">Techno</option>
-                            <option value="house">House</option>
-                            <option value="pop">Pop</option>
-                            <option value="rock">Rock</option>
-                            <option value="hiphop">Hip-Hop</option>
-                            <option value="electronic">Electronic</option>
-                            <option value="jazz">Jazz</option>
-                            <option value="metal">Metal</option>
-                            <option value="latin">Latin</option>
-                            <option value="drumandbass">Drum and Bass</option>
-                            <option value="other">Egyéb</option>
-                        </select>
-                    </div>
+
+                    <GlassSelect 
+                        label="Város"
+                        value={city}
+                        options={CITY_OPTIONS}
+                        onChange={(e) => setCity(e.target.value)}
+                    />
+
+                    <GlassSelect 
+                        label="Időszak"
+                        value={selectedMonth}
+                        options={[{ value: '', label: 'Bármikor' }, ...months]}
+                        onChange={(e) => setSelectedMonth(e.target.value)}
+                    />
+
+                    <GlassSelect 
+                        label="Stílus"
+                        value={type}
+                        options={STYLE_OPTIONS}
+                        onChange={(e) => setType(e.target.value)}
+                    />
                 </div>
 
                 {/* ── Tabok ───────────────────────────────────────── */}

@@ -74,9 +74,22 @@ const Ranking = () => {
                                             )}
                                         </div>
 
-                                        <div className="user-name">
+                                        <div className="user-name" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                                             {user.username}
                                             {isMe && <span className="me-badge">TE</span>}
+                                            {user.pinnedBadges && user.pinnedBadges.length > 0 && (
+                                                <div style={{ display: 'flex', gap: '4px' }}>
+                                                    {user.pinnedBadges.map(badge => (
+                                                        <img 
+                                                            key={`pinned-${badge.badgeID}`} 
+                                                            src={badge.iconUrl || 'https://res.cloudinary.com/dwgiehe3s/image/upload/v1774858004/Newcomer_badge_vcujay.png'} 
+                                                            alt={badge.name} 
+                                                            title={badge.name}
+                                                            style={{ width: '24px', height: '24px', objectFit: 'contain', cursor: 'help' }}
+                                                        />
+                                                    ))}
+                                                </div>
+                                            )}
                                         </div>
 
                                         <div className="stat-item parties">

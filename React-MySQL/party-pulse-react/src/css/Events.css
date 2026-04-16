@@ -76,7 +76,7 @@
 /* Events Page Premium Styles */
 .filters-premium {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 20px;
     background: rgba(255, 255, 255, 0.03);
     padding: 25px;
@@ -84,6 +84,21 @@
     border: 1px solid rgba(188, 19, 254, 0.2);
     margin-bottom: 30px;
     backdrop-filter: blur(10px);
+    position: relative; /* Stacking context */
+    z-index: 100;
+}
+
+@media (max-width: 1100px) {
+    .filters-premium {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 650px) {
+    .filters-premium {
+        grid-template-columns: 1fr;
+        padding: 20px;
+    }
 }
 
 .filter-group {
@@ -126,6 +141,7 @@
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     margin-bottom: 40px;
     height: 450px;
+    z-index: 1; /* Alacsonyabb, mint a szűrők */
 }
 
 .map-overlay-info {
@@ -181,23 +197,29 @@
     padding: 20px;
 }
 
-@media (max-width: 768px) {
-    .filters {
-        flex-direction: column;
-    }
-
-    .filters input,
-    .filters select {
-        width: 100%;
-    }
-
+@media (max-width: 990px) {
     .events-page-header {
         flex-direction: column;
         align-items: flex-start;
+        gap: 20px;
     }
 
     .btn-create-event {
         width: 100%;
         justify-content: center;
+    }
+
+    .map-wrapper-premium {
+        height: 350px;
+    }
+}
+
+@media (max-width: 650px) {
+    .filters-premium {
+        grid-template-columns: 1fr;
+    }
+
+    .section-title {
+        font-size: 1.8rem;
     }
 }

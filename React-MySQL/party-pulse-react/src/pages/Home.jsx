@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import EventCard from '../components/EventCard';
 import ReviewModal from '../components/ReviewModal';
 import { useEvents } from '../hooks/useEvents';
+import PartyPulseTitle3D from '../components/3d/PartyPulseTitle3D';
 import PartyBackground from '../components/3d/PartyParticles';
 import '../css/Home.css';
 
@@ -17,7 +18,8 @@ const Home = () => {
         fetchEvents();
     }, [fetchEvents]);
 
-    const quickSearch = () => {
+    const quickSearch = (e) => {
+        if (e && e.type === 'keydown' && e.key !== 'Enter') return;
         const searchValue = document.getElementById('quick-search-input').value;
         navigate(`/events?keyword=${searchValue}`);
     };
@@ -31,7 +33,9 @@ const Home = () => {
         fetchEvents();
     };
 
-    const featuredEvents = allEvents.slice(0, 3);
+    const featuredEvents = allEvents
+        .filter(event => event.isFeatured && !event.hasEnded)
+        .slice(0, 3);
 
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -58,31 +62,28 @@ const Home = () => {
     return (
         <div id="home" className="home-page">
             <section className="hero">
-                <PartyBackground
-                    containerStyle={{ zIndex: 0 }}
-                    count={3000}
-                    color="#ff00de"
-                />
-
                 <motion.div
                     className="hero-content"
                     variants={containerVariants}
                     initial="hidden"
                     animate="visible"
                 >
-                    <motion.h1 variants={itemVariants}>
-                        <span className="text-gradient">Party Pulse</span>
-                    </motion.h1>
+                    <PartyPulseTitle3D />
                     <motion.p variants={itemVariants}>
                         Találd meg a legjobb bulikat BAZ megyében!
                     </motion.p>
                     <motion.div
-                        className="search-box"
+                        className="search-box glass-card"
                         variants={itemVariants}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                     >
-                        <input type="text" id="quick-search-input" placeholder="Miskolc, Ózd, Mezőkövesd..." />
+                        <input
+                            type="text"
+                            id="quick-search-input"
+                            placeholder="Miskolc, Ózd, Mezőkövesd..."
+                            onKeyDown={quickSearch}
+                        />
                         <button className="btn-pulse" onClick={quickSearch}>Keresés</button>
                     </motion.div>
                 </motion.div>

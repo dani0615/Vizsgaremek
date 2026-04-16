@@ -49,45 +49,45 @@ const ReviewModal = ({ isOpen, onClose, event, onReviewSuccess }) => {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 style={{
-                    position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)',
+                    position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    zIndex: 99999, backdropFilter: 'blur(8px)'
+                    zIndex: 99999, backdropFilter: 'blur(10px)'
                 }}
             >
                 <motion.div
-                    className="modal-content"
+                    className="modal-content glass-modal"
                     initial={{ opacity: 0, y: 30, scale: 0.95 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 30, scale: 0.95 }}
                     style={{
-                        background: 'linear-gradient(145deg, rgba(30,10,50,0.95), rgba(10,25,40,0.95))',
-                        padding: '2rem', borderRadius: '24px', maxWidth: '400px', width: '90%',
-                        border: '1px solid rgba(188,19,254,0.3)',
-                        boxShadow: '0 20px 60px rgba(0,0,0,0.6), inset 0 0 40px rgba(188,19,254,0.1)'
+                        padding: '2.5rem', borderRadius: '28px', maxWidth: '450px', width: '95%',
+                        position: 'relative', overflow: 'hidden'
                     }}
                 >
-                    <h2 style={{ textAlign: 'center', marginBottom: '0.5rem', color: '#fff', fontSize: '1.8rem' }}>
+                    <div className="glass-shine" style={{ position: 'absolute', top: '-50%', left: '-50%', width: '200%', height: '200%', background: 'radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%)', pointerEvents: 'none' }}></div>
+                    
+                    <h2 style={{ textAlign: 'center', marginBottom: '0.5rem', color: '#fff', fontSize: '2rem', fontWeight: '800' }}>
                         Értékeld a bulit!
                     </h2>
-                    <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.6)', marginBottom: '1.5rem', fontSize: '0.95rem' }}>
+                    <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.5)', marginBottom: '2rem', fontSize: '1rem' }}>
                         {event?.name}
                     </p>
 
                     {error && (
-                        <div style={{ background: 'rgba(255,60,80,0.15)', color: '#ff3c50', padding: '10px', borderRadius: '8px', marginBottom: '1rem', textAlign: 'center', fontSize: '0.9rem' }}>
+                        <div style={{ background: 'rgba(255,60,80,0.15)', color: '#ff3c50', padding: '12px', borderRadius: '12px', marginBottom: '1.5rem', textAlign: 'center', fontSize: '0.9rem', border: '1px solid rgba(255,60,80,0.2)' }}>
                             {error}
                         </div>
                     )}
 
-                    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', position: 'relative', zIndex: 1 }}>
                         
                         {/* Csillagok */}
-                        <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', fontSize: '2.5rem' }}>
+                        <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', fontSize: '3rem' }}>
                             {[1, 2, 3, 4, 5].map((star) => (
                                 <motion.button
                                     type="button"
                                     key={star}
-                                    whileHover={{ scale: 1.2 }}
+                                    whileHover={{ scale: 1.2, rotate: 5 }}
                                     whileTap={{ scale: 0.9 }}
                                     onClick={() => setRating(star)}
                                     onMouseEnter={() => setHoverRating(star)}
@@ -96,8 +96,9 @@ const ReviewModal = ({ isOpen, onClose, event, onReviewSuccess }) => {
                                         background: 'transparent',
                                         border: 'none',
                                         cursor: 'pointer',
-                                        color: (hoverRating || rating) >= star ? '#ffd700' : 'rgba(255,255,255,0.15)',
-                                        transition: 'color 0.2s'
+                                        color: (hoverRating || rating) >= star ? '#ffd700' : 'rgba(255,255,255,0.1)',
+                                        textShadow: (hoverRating || rating) >= star ? '0 0 20px rgba(255,215,0,0.5)' : 'none',
+                                        transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)'
                                     }}
                                 >
                                     ★
@@ -107,7 +108,7 @@ const ReviewModal = ({ isOpen, onClose, event, onReviewSuccess }) => {
 
                         {/* Szöveges értékelés */}
                         <div>
-                            <label style={{ display: 'block', marginBottom: '8px', color: 'rgba(255,255,255,0.8)' }}>
+                            <label style={{ display: 'block', marginBottom: '10px', color: 'rgba(255,255,255,0.7)', fontSize: '0.85rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '1px' }}>
                                 Véleményed (opcionális)
                             </label>
                             <textarea
@@ -116,24 +117,29 @@ const ReviewModal = ({ isOpen, onClose, event, onReviewSuccess }) => {
                                 placeholder="Milyen volt a hangulat? Mit imádtál a legjobban?"
                                 rows="4"
                                 style={{
-                                    width: '100%', padding: '12px', borderRadius: '12px',
-                                    background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
-                                    color: '#fff', fontSize: '0.95rem', resize: 'vertical'
+                                    width: '100%', padding: '15px', borderRadius: '16px',
+                                    background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)',
+                                    color: '#fff', fontSize: '1rem', resize: 'vertical', outline: 'none',
+                                    transition: 'border-color 0.3s, box-shadow 0.3s'
                                 }}
+                                onFocus={(e) => { e.target.style.borderColor = 'var(--primary)'; e.target.style.boxShadow = '0 0 15px rgba(188,19,254,0.2)'; }}
+                                onBlur={(e) => { e.target.style.borderColor = 'rgba(255,255,255,0.1)'; e.target.style.boxShadow = 'none'; }}
                             />
                         </div>
 
                         {/* Gombok */}
-                        <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
+                        <div style={{ display: 'flex', gap: '1.2rem', marginTop: '1rem' }}>
                             <button
                                 type="button"
                                 onClick={onClose}
                                 disabled={loading}
                                 style={{
-                                    flex: 1, padding: '12px', borderRadius: '50px',
-                                    background: 'transparent', border: '1px solid rgba(255,255,255,0.2)',
-                                    color: '#fff', cursor: 'pointer', opacity: loading ? 0.5 : 1
+                                    flex: 1, padding: '14px', borderRadius: '50px',
+                                    background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
+                                    color: 'rgba(255,255,255,0.7)', cursor: 'pointer', opacity: loading ? 0.5 : 1, fontWeight: '700', transition: 'all 0.3s'
                                 }}
+                                onMouseEnter={(e) => { e.target.style.background = 'rgba(255,255,255,0.1)'; e.target.style.color = '#fff'; }}
+                                onMouseLeave={(e) => { e.target.style.background = 'rgba(255,255,255,0.05)'; e.target.style.color = 'rgba(255,255,255,0.7)'; }}
                             >
                                 Mégse
                             </button>
@@ -141,13 +147,14 @@ const ReviewModal = ({ isOpen, onClose, event, onReviewSuccess }) => {
                                 type="submit"
                                 disabled={loading}
                                 style={{
-                                    flex: 1, padding: '12px', borderRadius: '50px',
+                                    flex: 1.5, padding: '14px', borderRadius: '50px',
                                     background: 'linear-gradient(90deg, var(--primary), var(--secondary))',
-                                    border: 'none', color: '#fff', fontWeight: 'bold', cursor: 'pointer',
-                                    opacity: loading ? 0.7 : 1, display: 'flex', justifyContent: 'center', alignItems: 'center'
+                                    border: 'none', color: '#fff', fontWeight: '800', cursor: 'pointer',
+                                    boxShadow: '0 8px 25px rgba(188,19,254,0.4)',
+                                    opacity: loading ? 0.7 : 1, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px'
                                 }}
                             >
-                                {loading ? <i className="fas fa-spinner fa-spin"></i> : 'Küldés'}
+                                {loading ? <i className="fas fa-spinner fa-spin"></i> : <><i className="fas fa-paper-plane"></i> Küldés</>}
                             </button>
                         </div>
                     </form>

@@ -233,7 +233,7 @@
     cursor: pointer;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 950px) {
     .navbar {
         height: 65px;
         padding: 0 5%;

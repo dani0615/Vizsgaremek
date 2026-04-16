@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { apiClient, API_BASE_URL } from '../services/apiConfig';
 import EventCard from '../components/EventCard';
+import CreateEventModal from '../components/CreateEventModal';
 import ReviewModal from '../components/ReviewModal';
 import { useEvents } from '../hooks/useEvents';
+import { processImage } from '../utils/ImageProcessor';
 import '../css/Profile.css';
 
 const Profile = () => {
@@ -17,6 +19,8 @@ const Profile = () => {
     const { events: allEvents, loading: allEventsLoading, fetchEvents } = useEvents();
     const [showReviewModal, setShowReviewModal] = useState(false);
     const [eventToReview, setEventToReview] = useState(null);
+    const [showCreateModal, setShowCreateModal] = useState(false);
+    const [eventToEdit, setEventToEdit] = useState(null);
 
     const handleReviewClick = (event) => {
         setEventToReview(event);
@@ -24,6 +28,28 @@ const Profile = () => {
     };
 
     const handleReviewSuccess = () => {
+        fetchEvents();
+    };
+
+    const handleEditClick = (event) => {
+        setEventToEdit(event);
+        setShowCreateModal(true);
+    };
+
+    const handleDeleteClick = async (eventId) => {
+        if (!window.confirm("Biztosan törölni szeretnéd ezt az eseményt? A művelet nem vonható vissza.")) return;
+
+        try {
+            await apiClient.delete(`/Event/Delete/${eventId}`);
+            fetchEvents();
+        } catch (err) {
+            console.error("Hiba a törlés során:", err);
+            const msg = err.response?.data || err.message || 'Ismeretlen hiba történt.';
+            alert(typeof msg === 'string' ? `Hiba a törlés során: ${msg}` : "Váratlan hiba történt a törlés során.");
+        }
+    };
+
+    const handleEventCreated = () => {
         fetchEvents();
     };
 
@@ -43,6 +69,10 @@ const Profile = () => {
         birthDate: '',
         lookingFor: ''
     });
+
+    const [availableBadges, setAvailableBadges] = useState([]);
+    const [badgesLoading, setBadgesLoading] = useState(true);
+    const [pinnedBadges, setPinnedBadges] = useState([]);
 
     const [showPasswordChange, setShowPasswordChange] = useState(false);
     const [passwordData, setPasswordData] = useState({
@@ -69,7 +99,25 @@ const Profile = () => {
 
         fetchProfileData();
         fetchEvents();
+        fetchAvailableBadges();
     }, [isAuthenticated, authLoading, navigate, fetchEvents]);
+
+    const fetchAvailableBadges = async () => {
+        try {
+            setBadgesLoading(true);
+            const response = await apiClient.get('/api/Badge/all');
+            setAvailableBadges(response.data);
+        } catch (err) {
+            console.error('Error fetching badges:', err);
+        } finally {
+            setBadgesLoading(false);
+        }
+    };
+
+    const handleCardClick = (event) => {
+        // Navigate to the events page and filter by this event's name
+        navigate(`/events?keyword=${encodeURIComponent(event.name)}`);
+    };
 
     // Helper functions for formatting (replicated from useEvents for consistency)
     const isDummyImage = (url) => {
@@ -127,11 +175,38 @@ const Profile = () => {
                 birthDate: response.data.birthDate ? response.data.birthDate.split('T')[0] : '',
                 lookingFor: response.data.lookingFor || 'both'
             });
+
+            if (response.data.badges) {
+                setPinnedBadges(response.data.badges.filter(b => b.isPinned).map(b => b.badgeID));
+            }
         } catch (err) {
             console.error('Error fetching profile:', err);
             setError('Hiba történt a profil betöltése során.');
         } finally {
             setProfileLoading(false);
+        }
+    };
+
+    const togglePinBadge = (badgeId) => {
+        setPinnedBadges(prev => {
+            if (prev.includes(badgeId)) return prev.filter(id => id !== badgeId);
+            if (prev.length >= 3) {
+                alert("Maximum 3 jelvényt tűzhetsz ki!");
+                return prev;
+            }
+            return [...prev, badgeId];
+        });
+    };
+
+    const savePinnedBadges = async () => {
+        try {
+            await apiClient.post('/api/User/pin-badges', pinnedBadges);
+            setSuccessMessage("Kitűzött jelvények mentve!");
+            setTimeout(() => setSuccessMessage(null), 3000);
+        } catch(err) {
+            console.error("Error saving pinned badges:", err);
+            setError("Hiba a jelvények mentésekor.");
+            setTimeout(() => setError(null), 3000);
         }
     };
 
@@ -155,11 +230,14 @@ const Profile = () => {
         }
 
         const formData = new FormData();
-        formData.append('file', file);
-
         try {
             setProfileLoading(true);
             setError(null);
+            
+            // Optimalizálás (Átméretezés + WebP)
+            const processedFile = await processImage(file, 500, 500, 0.82);
+            formData.append('file', processedFile);
+
             await apiClient.post('/api/User/avatar', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
@@ -271,6 +349,23 @@ const Profile = () => {
         }
         const hue = hash % 360;
         return `hsl(${hue}, 70%, 50%)`;
+    };
+
+    const formatCriteria = (criteriaJson) => {
+        try {
+            const criteria = JSON.parse(criteriaJson);
+            switch (criteria.type) {
+                case 'registration': return 'Regisztrálj az oldalra';
+                case 'attendance': return `Vegyél részt legalább ${criteria.min} eseményen`;
+                case 'age':
+                    if (criteria.months) return `Légy tag legalább ${criteria.months} hónapja`;
+                    if (criteria.years) return `Légy tag legalább ${criteria.years} éve`;
+                    return 'Hosszabb ideje légy tag';
+                default: return 'Különleges feladat teljesítése';
+            }
+        } catch (e) {
+            return 'Küldetés teljesítése';
+        }
     };
 
     if (authLoading || profileLoading) {
@@ -549,6 +644,66 @@ const Profile = () => {
                                     </div>
                                 </div>
 
+                                <div className="detail-section badges-section">
+                                    <h3>Jelvények & Mérföldkövek <i className="fas fa-medal" style={{ color: '#bc13fe', marginLeft: '8px' }}></i></h3>
+                                    {badgesLoading ? (
+                                        <div className="mini-loader">Jelvények betöltése...</div>
+                                    ) : (
+                                        <div>
+                                            <p style={{ textAlign: 'center', marginBottom: '15px', color: 'var(--text-muted)' }}>Kattints a megszerzett jelvényekre, hogy kitűzd őket (max 3 db)!</p>
+                                            <div className="badges-grid">
+                                                {availableBadges.map(badge => (
+                                                    <div 
+                                                        key={badge.badgeID} 
+                                                        className={`badge-item ${badge.isEarned ? 'earned' : 'not-earned'} ${pinnedBadges.includes(badge.badgeID) ? 'pinned' : ''}`}
+                                                        onClick={() => badge.isEarned && togglePinBadge(badge.badgeID)}
+                                                        style={{ 
+                                                            cursor: badge.isEarned ? 'pointer' : 'default',
+                                                            border: pinnedBadges.includes(badge.badgeID) ? '2px solid var(--primary)' : '',
+                                                            transform: pinnedBadges.includes(badge.badgeID) ? 'scale(1.05)' : ''
+                                                        }}
+                                                    >
+                                                    <div className="badge-desc-tooltip">
+                                                        <strong>{badge.name}</strong>
+                                                        <p style={{ margin: '5px 0', fontSize: '0.8rem', opacity: 0.8 }}>{badge.description}</p>
+                                                        <div style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px solid rgba(255,255,255,0.1)', fontSize: '0.75rem', color: 'var(--accent)' }}>
+                                                            <i className="fas fa-tasks"></i> {formatCriteria(badge.criteria)}
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="badge-icon-wrapper">
+                                                        <img 
+                                                            src={badge.iconUrl || 'https://res.cloudinary.com/dwgiehe3s/image/upload/v1774858004/Newcomer_badge_vcujay.png'} 
+                                                            alt={badge.name} 
+                                                            className="badge-icon"
+                                                        />
+                                                        {badge.isEarned && !pinnedBadges.includes(badge.badgeID) && (
+                                                            <div className="badge-status-icon">
+                                                                <i className="fas fa-check"></i>
+                                                            </div>
+                                                        )}
+                                                        {pinnedBadges.includes(badge.badgeID) && (
+                                                            <div className="badge-status-icon" style={{ backgroundColor: 'var(--primary)', color: 'white' }}>
+                                                                <i className="fas fa-thumbtack"></i>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    <div className="badge-info">
+                                                        <h4>{badge.name}</h4>
+                                                        <span className="badge-criteria">
+                                                            {badge.isEarned ? 'Teljesítve!' : formatCriteria(badge.criteria)}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                            </div>
+                                            <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                                                <button className="btn-pulse" onClick={savePinnedBadges}>Kitűzött jelvények mentése</button>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+
                                 <div className="detail-section">
                                     <div style={{ display: 'flex', justifyContent: 'center' }}>
                                         <button
@@ -608,7 +763,7 @@ const Profile = () => {
                                     {myEventsLoading ? (
                                         <div className="mini-loader">Betöltés...</div>
                                     ) : myUpcomingEvents.length > 0 ? (
-                                        <div className="profile-events-grid">
+                                        <div className="event-grid">
                                             {myUpcomingEvents.map(event => (
                                                 <EventCard
                                                     key={event.id}
@@ -617,6 +772,11 @@ const Profile = () => {
                                                     attendeeCount={event.attendeeCount ?? 0}
                                                     isFavorite={event.isFavorite ?? false}
                                                     onReviewClick={handleReviewClick}
+                                                    onCardClick={() => handleCardClick(event)}
+                                                    onEdit={() => handleEditClick(event)}
+                                                    onDelete={() => handleDeleteClick(event.id)}
+                                                    canEdit={user?.role === 'admin'}
+                                                    canDelete={user?.role === 'admin'}
                                                 />
                                             ))}
                                         </div>
@@ -634,7 +794,7 @@ const Profile = () => {
                                     {myEventsLoading ? (
                                         <div className="mini-loader">Betöltés...</div>
                                     ) : myPastEvents.length > 0 ? (
-                                        <div className="profile-events-grid">
+                                        <div className="event-grid">
                                             {myPastEvents.map(event => (
                                                 <EventCard
                                                     key={`past-${event.id}`}
@@ -643,6 +803,11 @@ const Profile = () => {
                                                     attendeeCount={event.attendeeCount ?? 0}
                                                     isFavorite={event.isFavorite ?? false}
                                                     onReviewClick={handleReviewClick}
+                                                    onCardClick={() => handleCardClick(event)}
+                                                    onEdit={() => handleEditClick(event)}
+                                                    onDelete={() => handleDeleteClick(event.id)}
+                                                    canEdit={user?.role === 'admin'}
+                                                    canDelete={user?.role === 'admin'}
                                                 />
                                             ))}
                                         </div>
@@ -659,7 +824,7 @@ const Profile = () => {
                                     {myFavoritesLoading ? (
                                         <div className="mini-loader">Betöltés...</div>
                                     ) : myFavorites.length > 0 ? (
-                                        <div className="profile-events-grid">
+                                        <div className="event-grid">
                                             {myFavorites.map(event => (
                                                 <EventCard
                                                     key={`fav-${event.id}`}
@@ -668,6 +833,11 @@ const Profile = () => {
                                                     isAttending={event.isAttending ?? false}
                                                     attendeeCount={event.attendeeCount ?? 0}
                                                     onReviewClick={handleReviewClick}
+                                                    onCardClick={() => handleCardClick(event)}
+                                                    onEdit={() => handleEditClick(event)}
+                                                    onDelete={() => handleDeleteClick(event.id)}
+                                                    canEdit={user?.role === 'admin'}
+                                                    canDelete={user?.role === 'admin'}
                                                 />
                                             ))}
                                         </div>
@@ -689,6 +859,16 @@ const Profile = () => {
                 onClose={() => setShowReviewModal(false)}
                 event={eventToReview}
                 onReviewSuccess={handleReviewSuccess}
+            />
+
+            <CreateEventModal
+                open={showCreateModal}
+                onClose={() => {
+                    setShowCreateModal(false);
+                    setEventToEdit(null);
+                }}
+                onCreated={handleEventCreated}
+                eventToEdit={eventToEdit}
             />
         </section>
     );

@@ -1,0 +1,198 @@
+.glass-datepicker-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.glass-datepicker-label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    padding-left: 5px;
+}
+
+.glass-datepicker-control {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 16px 20px;
+    border-radius: 16px;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    min-height: 56px;
+}
+
+.glass-datepicker-control:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.glass-datepicker-control.active {
+    border-color: var(--accent);
+    box-shadow: 0 0 20px rgba(0, 243, 255, 0.15);
+}
+
+.glass-datepicker-icon {
+    color: var(--primary);
+    font-size: 1.1rem;
+    opacity: 0.8;
+}
+
+.glass-datepicker-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    width: 320px;
+    z-index: 1000;
+    padding: 20px !important;
+    background: rgba(11, 11, 26, 0.95) !important;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.calendar-header button {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.calendar-header button:hover {
+    background: var(--primary);
+}
+
+.calendar-title {
+    font-weight: 700;
+    font-size: 1rem;
+    display: flex;
+    gap: 8px;
+}
+
+.calendar-title span {
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: 0.2s;
+}
+
+.calendar-title span:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--accent);
+}
+
+.calendar-selector-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.calendar-years-grid {
+    max-height: 200px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.selector-item {
+    padding: 12px 5px;
+    text-align: center;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: 0.2s;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.selector-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.selector-item.active {
+    background: var(--primary);
+    color: white;
+    font-weight: 700;
+}
+
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--accent);
+    margin-bottom: 10px;
+    opacity: 0.8;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+}
+
+.calendar-day {
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: 0.2s;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.calendar-day:hover:not(.empty):not(.disabled) {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.calendar-day.today {
+    border: 1px solid var(--accent);
+    color: var(--accent);
+}
+
+.calendar-day.selected {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    font-weight: 700;
+    box-shadow: 0 4px 15px rgba(188, 19, 254, 0.3);
+}
+
+.calendar-day.disabled {
+    opacity: 0.2;
+    cursor: not-allowed;
+}
+
+.calendar-day.empty {
+    cursor: default;
+}
+
+@media (max-width: 480px) {
+    .glass-datepicker-dropdown {
+        width: calc(100vw - 40px);
+        left: 0;
+    }
+}

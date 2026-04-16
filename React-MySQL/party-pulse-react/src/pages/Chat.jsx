@@ -9,7 +9,7 @@ const Chat = () => {
     const { matchId } = useParams();
     const { user, isAuthenticated, loading: authLoading } = useAuth();
     const navigate = useNavigate();
-    
+
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
     const [partner, setPartner] = useState(null);
@@ -54,11 +54,11 @@ const Chat = () => {
 
         try {
             setLoading(true);
-            
+
             // Get partner info from matches list (or a specific endpoint if we had one)
             const matchesRes = await apiClient.get('/Matching/Matches');
             const currentMatch = matchesRes.data.find(m => m.matchID === parseInt(matchId));
-            
+
             if (!currentMatch) {
                 navigate('/messages');
                 return;
@@ -70,7 +70,7 @@ const Chat = () => {
             // Get history
             const historyRes = await apiClient.get(`/Chat/History/${matchId}`);
             setMessages(historyRes.data);
-            
+
         } catch (err) {
             console.error('Hiba a chat inicializálásakor:', err);
         } finally {
@@ -115,7 +115,7 @@ const Chat = () => {
                 .then(() => {
                     setIsConnected(true);
                     console.log('SignalR csatlakozva');
-                    
+
                     connection.on('ReceiveMessage', (msg) => {
                         // msg format: { messageId, chatRoomId, sender: { userID, username, name }, message, sentAt }
                         if (msg.chatRoomId === chatRoomId) {
@@ -182,8 +182,9 @@ const Chat = () => {
 
     if (matchId === 'new') {
         return (
-            <div className="chat-page page">
-                <div className="chat-header">
+            <div className="chat-container-wrapper page" style={{ minHeight: '100vh', paddingBottom: '40px', background: 'radial-gradient(circle at center, #0b0b1a 0%, #050510 100%)', display: 'flex', flexDirection: 'column' }}>
+                <div className="chat-page" style={{ maxWidth: '850px', width: '100%', margin: '20px auto', height: 'calc(100vh - 140px)', flex: '1', borderRadius: '24px', border: '1px solid rgba(255, 255, 255, 0.1)', background: 'rgba(11, 11, 26, 0.85)', padding: '0', boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+                    <div className="chat-header" style={{ backdropFilter: 'blur(20px)', background: 'rgba(255, 255, 255, 0.03)', zIndex: 10 }}>
                     <button className="chat-back-btn" onClick={() => navigate('/messages')}>
                         <i className="fas fa-arrow-left"></i>
                     </button>
@@ -195,25 +196,25 @@ const Chat = () => {
                 <div className="new-chat-container">
                     <div className="search-input-container">
                         <i className="fas fa-search"></i>
-                        <input 
-                            type="text" 
-                            className="user-search-input" 
-                            placeholder="Keresés név alapján..." 
+                        <input
+                            type="text"
+                            className="user-search-input"
+                            placeholder="Keresés név alapján..."
                             value={searchQuery}
                             onChange={handleSearch}
                             autoFocus
                         />
                     </div>
                     {isSearching ? (
-                        <div className="buddies-loading" style={{marginTop: '2rem'}}>
+                        <div className="buddies-loading" style={{ marginTop: '2rem' }}>
                             <div className="spinner" />
                         </div>
                     ) : (
                         <div className="search-results">
                             {searchResults.map(u => (
-                                <div 
-                                    key={u.userID} 
-                                    className="search-result-item" 
+                                <div
+                                    key={u.userID}
+                                    className="search-result-item"
                                     onClick={() => initiateChat(u.userID)}
                                 >
                                     {u.profilePictureBase64 ? (
@@ -230,7 +231,7 @@ const Chat = () => {
                                 </div>
                             ))}
                             {searchQuery.trim() && searchResults.length === 0 && !isSearching && (
-                                <div style={{textAlign: 'center', color: 'rgba(255,255,255,0.4)', marginTop: '2rem'}}>
+                                <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.4)', marginTop: '2rem' }}>
                                     Nincs találat.
                                 </div>
                             )}
@@ -238,16 +239,18 @@ const Chat = () => {
                     )}
                 </div>
             </div>
+            </div>
         );
     }
 
     return (
-        <div className="chat-page page">
-            <div className="chat-header">
+        <div className="chat-container-wrapper page" style={{ minHeight: '100vh', paddingBottom: '40px', background: 'radial-gradient(circle at center, #0b0b1a 0%, #050510 100%)', display: 'flex', flexDirection: 'column' }}>
+            <div className="chat-page" style={{ maxWidth: '850px', width: '100%', margin: '20px auto', height: 'calc(100vh - 140px)', flex: '1', borderRadius: '24px', border: '1px solid rgba(255, 255, 255, 0.1)', background: 'rgba(11, 11, 26, 0.85)', padding: '0', boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+                <div className="chat-header">
                 <button className="chat-back-btn" onClick={() => navigate('/messages')}>
                     <i className="fas fa-arrow-left"></i>
                 </button>
-                
+
                 {partner?.profilePictureBase64 ? (
                     <img src={partner.profilePictureBase64} alt={partner.name} className="chat-header-avatar" />
                 ) : (
@@ -255,7 +258,7 @@ const Chat = () => {
                         {partner?.name?.charAt(0).toUpperCase()}
                     </div>
                 )}
-                
+
                 <div className="chat-header-info">
                     <div className="chat-partner-name">{partner?.name}</div>
                     <div className="chat-status">
@@ -318,6 +321,7 @@ const Chat = () => {
                     <i className="fas fa-paper-plane"></i>
                 </button>
             </form>
+            </div>
         </div>
     );
 };

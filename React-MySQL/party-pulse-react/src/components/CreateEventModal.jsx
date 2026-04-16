@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { apiClient } from '../services/apiConfig';
+import { useAuth } from '../context/AuthContext';
+import { processImage } from '../utils/ImageProcessor';
 import '../css/CreateEventModal.css';
 
 const MUSIC_STYLES = [
@@ -20,6 +22,7 @@ const initialForm = {
     isPublic: true,
     latitude: '',
     longitude: '',
+    isFeatured: false,
 };
 
 const CreateEventModal = ({ open, onClose, onCreated, eventToEdit }) => {
@@ -29,6 +32,8 @@ const CreateEventModal = ({ open, onClose, onCreated, eventToEdit }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const { user } = useAuth();
+    const isAdmin = user?.role === 'admin';
     const fileInputRef = useRef(null);
 
     useEffect(() => {
@@ -42,9 +47,11 @@ const CreateEventModal = ({ open, onClose, onCreated, eventToEdit }) => {
                 ticketPrice: eventToEdit.ticketPrice ?? '',
                 musicStyle: eventToEdit.type === 'other' ? '' : (eventToEdit.type || ''), // handle initial empty value
                 maxAttendees: eventToEdit.maxAttendees ?? '',
+                isFeatured: eventToEdit.isFeatured ?? false,
                 isPublic: eventToEdit.isPublic ?? true,
                 latitude: eventToEdit.lat !== null ? eventToEdit.lat.toString() : '',
                 longitude: eventToEdit.lon !== null ? eventToEdit.lon.toString() : '',
+                isFeatured: eventToEdit.isFeatured ?? false,
             });
             // Try to set correct string matching MUSIC_STYLES case-insensitively
             if (eventToEdit.type) {
@@ -72,23 +79,36 @@ const CreateEventModal = ({ open, onClose, onCreated, eventToEdit }) => {
         }));
     };
 
-    const handleImageChange = (e) => {
+    const handleImageChange = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
-        setImageFile(file);
-        const reader = new FileReader();
-        reader.onloadend = () => setImagePreview(reader.result);
-        reader.readAsDataURL(file);
+        
+        try {
+            const processedFile = await processImage(file, 1024, 1024, 0.85);
+            setImageFile(processedFile);
+            const reader = new FileReader();
+            reader.onloadend = () => setImagePreview(reader.result);
+            reader.readAsDataURL(processedFile);
+        } catch (err) {
+            console.error("Képfeldolgozási hiba:", err);
+            setImageFile(file); // Fallback to original
+        }
     };
 
-    const handleDrop = (e) => {
+    const handleDrop = async (e) => {
         e.preventDefault();
         const file = e.dataTransfer.files[0];
         if (file && file.type.startsWith('image/')) {
-            setImageFile(file);
-            const reader = new FileReader();
-            reader.onloadend = () => setImagePreview(reader.result);
-            reader.readAsDataURL(file);
+            try {
+                const processedFile = await processImage(file, 1024, 1024, 0.85);
+                setImageFile(processedFile);
+                const reader = new FileReader();
+                reader.onloadend = () => setImagePreview(reader.result);
+                reader.readAsDataURL(processedFile);
+            } catch (err) {
+                console.error("Képfeldolgozási hiba:", err);
+                setImageFile(file);
+            }
         }
     };
 
@@ -115,6 +135,7 @@ const CreateEventModal = ({ open, onClose, onCreated, eventToEdit }) => {
             if (form.maxAttendees !== '') formData.append('MaxAttendees', form.maxAttendees);
             if (form.latitude !== '') formData.append('Latitude', form.latitude);
             if (form.longitude !== '') formData.append('Longitude', form.longitude);
+            if (isAdmin) formData.append('IsFeatured', form.isFeatured.toString());
             if (imageFile) formData.append('Image', imageFile);
 
             const token = localStorage.getItem('token');
@@ -364,6 +385,28 @@ const CreateEventModal = ({ open, onClose, onCreated, eventToEdit }) => {
                                         </div>
                                     </label>
                                 </div>
+                                
+                                {/* Kiemelt esemény kapcsoló (csak adminnak) */}
+                                {isAdmin && (
+                                    <div className="cem-field cem-field-toggle">
+                                        <label className="cem-toggle-label">
+                                            <div className="cem-toggle-info">
+                                                <i className="fas fa-fire" style={{ color: form.isFeatured ? '#ff00de' : 'rgba(255,255,255,0.4)' }}></i>
+                                                <span>Kiemelt esemény</span>
+                                                <span className="cem-toggle-hint">
+                                                    Megjelenik a kezdőlap tetején
+                                                </span>
+                                            </div>
+                                            <div
+                                                className={`cem-toggle-switch ${form.isFeatured ? 'active' : ''}`}
+                                                style={form.isFeatured ? { background: 'linear-gradient(90deg, #ff00de, #bc13fe)' } : {}}
+                                                onClick={() => setForm(p => ({ ...p, isFeatured: !p.isFeatured }))}
+                                            >
+                                                <div className="cem-toggle-knob"></div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                )}
 
                                 {/* Kép feltöltés */}
                                 <div className="cem-field cem-field-full">

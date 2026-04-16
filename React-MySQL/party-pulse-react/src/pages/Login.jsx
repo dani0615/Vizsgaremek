@@ -1,7 +1,22 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import GlassSelect from '../components/GlassSelect';
+import GlassDatePicker from '../components/GlassDatePicker';
 import '../css/Auth.css';
+
+const GENDER_OPTIONS = [
+    { value: 'male', label: 'Férfi' },
+    { value: 'female', label: 'Nő' },
+    { value: 'other', label: 'Egyéb' },
+    { value: 'prefer_not_to_say', label: 'Rejtett' },
+];
+
+const LOOKING_FOR_OPTIONS = [
+    { value: 'friends', label: 'Barátokat' },
+    { value: 'party_buddies', label: 'Bulitársakat' },
+    { value: 'both', label: 'Mindenkit!' },
+];
 
 const Login = () => {
     const [isLogin, setIsLogin] = useState(true);
@@ -104,12 +119,19 @@ const Login = () => {
 
     return (
         <section id="login" className="page active">
+            {/* Background Decorative Orbs */}
+            <div className="auth-background-decor">
+                <div className="auth-orb auth-orb--1"></div>
+                <div className="auth-orb auth-orb--2"></div>
+                <div className="auth-orb auth-orb--3"></div>
+            </div>
+
             <div className="auth-page-wrapper">
                 {/* Bal oldal - Miért érdemes? */}
                 <div className="auth-features-side">
-                    <h2 className="text-gradient">Party Pulse Life</h2>
-                    <p style={{ fontSize: '1.2rem', color: 'rgba(255,255,255,0.8)', marginBottom: '20px' }}>
-                        Csatlakozz Közép-Európa legpörgősebb közösségéhez! 🚀
+                    <h2 className="text-gradient">Csatlakozz Közép-Európa<br/>legpörgősebb közösségéhez! 🚀</h2>
+                    <p style={{ fontSize: '1.1rem', color: 'rgba(255,255,255,0.6)', marginBottom: '20px' }}>
+                        Több mint egy eseménykereső. Egy életstílus.
                     </p>
 
                     <div className="features-list">
@@ -215,52 +237,28 @@ const Login = () => {
                                     </div>
 
                                     <div className="auth-input-group">
-                                        <label>Születési dátum</label>
-                                        <div className="input-with-icon">
-                                            <i className="fas fa-calendar"></i>
-                                            <input
-                                                type="date"
-                                                value={birthDate}
-                                                onChange={(e) => setBirthDate(e.target.value)}
-                                                max={maxDate}
-                                                required
-                                                disabled={loading}
-                                            />
-                                        </div>
+                                        <GlassDatePicker
+                                            label="Születési dátum"
+                                            value={birthDate}
+                                            onChange={(e) => setBirthDate(e.target.value)}
+                                            maxDate={maxDate}
+                                            disabled={loading}
+                                        />
                                     </div>
 
-                                    <div style={{ display: 'flex', gap: '15px' }}>
-                                        <div className="auth-input-group" style={{ flex: 1 }}>
-                                            <label>Nem</label>
-                                            <div className="input-with-icon">
-                                                <i className="fas fa-venus-mars"></i>
-                                                <select
-                                                    value={gender}
-                                                    onChange={(e) => setGender(e.target.value)}
-                                                    disabled={loading}
-                                                >
-                                                    <option value="male">Férfi</option>
-                                                    <option value="female">Nő</option>
-                                                    <option value="other">Egyéb</option>
-                                                    <option value="prefer_not_to_say">Rejtett</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div className="auth-input-group" style={{ flex: 1 }}>
-                                            <label>Kit keresel?</label>
-                                            <div className="input-with-icon">
-                                                <i className="fas fa-search-heart"></i>
-                                                <select
-                                                    value={lookingFor}
-                                                    onChange={(e) => setLookingFor(e.target.value)}
-                                                    disabled={loading}
-                                                >
-                                                    <option value="friends">Barátokat</option>
-                                                    <option value="party_buddies">Bulitársakat</option>
-                                                    <option value="both">Mindenkit!</option>
-                                                </select>
-                                            </div>
-                                        </div>
+                                    <div style={{ display: 'flex', gap: '15px', marginBottom: '15px' }}>
+                                        <GlassSelect
+                                            label="Nem"
+                                            value={gender}
+                                            options={GENDER_OPTIONS}
+                                            onChange={(e) => setGender(e.target.value)}
+                                        />
+                                        <GlassSelect
+                                            label="Kit keresel?"
+                                            value={lookingFor}
+                                            options={LOOKING_FOR_OPTIONS}
+                                            onChange={(e) => setLookingFor(e.target.value)}
+                                        />
                                     </div>
                                 </div>
                             )}

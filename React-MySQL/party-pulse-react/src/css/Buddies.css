@@ -1,120 +1,233 @@
 /* ===== BUDDIES / SWIPE PAGE ===== */
 .buddies-page {
-    padding-top: 90px;
-    height: 100vh;
+    padding-top: 110px; /* Megemelt padding a navbar miatt */
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
-    overflow: hidden;
+    position: relative;
+    background: radial-gradient(circle at center, #0b0b1a 0%, #050510 100%);
+}
+
+/* ────────────────────────────────────────────
+   DECORATIVE BACKGROUND ELEMENTS
+──────────────────────────────────────────── */
+.buddies-page::before,
+.buddies-page::after {
+    content: '';
+    position: fixed;
+    width: 60vw;
+    height: 60vw;
+    filter: blur(120px);
+    z-index: 0;
+    opacity: 0.08;
+    pointer-events: none;
+    border-radius: 50%;
+}
+
+.buddies-page::before {
+    top: -20%;
+    left: -20%;
+    background: var(--primary);
+    animation: floatingOrb 12s ease-in-out infinite alternate;
+}
+
+.buddies-page::after {
+    bottom: -20%;
+    right: -20%;
+    background: var(--accent);
+    animation: floatingOrb 18s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes floatingOrb {
+    from { transform: translate(0, 0) scale(1); }
+    to { transform: translate(5%, 5%) scale(1.1); }
+}
+
+/* ────────────────────────────────────────────
+   LAYOUT CONTAINERS
+──────────────────────────────────────────── */
+.buddies-app-container {
+    display: flex;
+    width: 100%;
+    max-width: 1400px;
+    min-height: 700px;
+    margin: 0 auto;
+    padding: 0 3rem 6rem; /* Extra padding a footer előtt */
+    position: relative;
+    z-index: 1;
+    gap: 4rem;
+    justify-content: center;
 }
 
 .buddies-header {
     text-align: center;
-    margin-bottom: 1.2rem;
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 2;
 }
 
 .buddies-header h1 {
-    font-size: 2.2rem;
-    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    font-size: 2.5rem;
+    font-weight: 900;
+    background: linear-gradient(90deg, var(--primary), var(--accent), var(--secondary));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.5rem;
+    letter-spacing: -1px;
 }
 
 .buddies-header p {
-    color: rgba(255,255,255,0.45);
-    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 1rem;
+    font-weight: 500;
 }
 
-/* ─── Progress indicator ─── */
-.card-progress {
-    font-size: 0.8rem;
-    color: rgba(255,255,255,0.35);
-    margin-bottom: 0.8rem;
-    letter-spacing: 0.5px;
-}
-
-/* ─── Matches Row ─── */
-.buddies-matches-section {
-    width: 100%;
-    max-width: 600px;
-    margin: 0 auto 1.5rem;
-    padding: 0 1rem;
-}
-
-.buddies-matches-title {
-    font-size: 0.9rem;
-    color: rgba(255,255,255,0.6);
-    margin-bottom: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.buddies-matches-row {
+/* ────────────────────────────────────────────
+   SIDEBAR: MATCHES
+──────────────────────────────────────────── */
+.buddies-sidebar {
+    width: 320px;
+    flex-shrink: 0;
+    height: 100%;
     display: flex;
-    overflow-x: auto;
-    gap: 1rem;
-    padding-bottom: 0.5rem;
-    padding-top: 0.4rem;
+    flex-direction: column;
 }
 
-.buddies-matches-row::-webkit-scrollbar {
-    height: 6px;
+.buddies-sidebar-inner {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 24px;
+    padding: 1.5rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 }
 
-.buddies-matches-row::-webkit-scrollbar-thumb {
-    background: rgba(255,255,255,0.15);
-    border-radius: 4px;
+.buddies-sidebar-title {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.4);
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 700;
+    padding-left: 0.5rem;
 }
 
-.buddies-match-item {
+.buddies-matches-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.2rem;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+    padding-bottom: 1rem;
+}
+
+.buddies-matches-grid::-webkit-scrollbar {
+    width: 4px;
+}
+
+.buddies-matches-grid::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+.buddies-match-card {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.8rem;
     cursor: pointer;
-    min-width: 60px;
-    transition: transform 0.2s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: rgba(255, 255, 255, 0.03);
+    padding: 1rem 0.5rem;
+    border-radius: 20px;
+    border: 1px solid transparent;
 }
 
-.buddies-match-item:hover {
-    transform: translateY(-2px);
+.buddies-match-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(var(--primary-rgb), 0.3);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
 
-.buddies-match-avatar-small {
-    width: 60px;
-    height: 60px;
+.buddies-match-avatar-wrapper {
+    width: 70px;
+    height: 70px;
+    position: relative;
+    padding: 3px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+}
+
+.buddies-match-avatar-img,
+.buddies-match-avatar-placeholder {
+    width: 100%;
+    height: 100%;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid var(--primary);
-    padding: 2px;
+    background: #111;
+    border: 2px solid #0b0b1a;
 }
 
-.buddies-match-avatar-small.buddies-match-avatar-placeholder {
+/* Speciálisabb szelektor, hogy ne írja felül az overlay stílusa */
+.buddies-sidebar .buddies-match-avatar-placeholder {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.25rem;
+    font-size: 1.1rem !important; /* Kisebb betűméret kényszerítve */
     font-weight: 800;
     color: #fff;
 }
 
-.buddies-match-name {
-    font-size: 0.75rem;
-    color: rgba(255,255,255,0.8);
-    text-align: center;
+.buddies-match-username {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 600;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 60px;
+    max-width: 100%;
+}
+
+/* ────────────────────────────────────────────
+   MAIN CONTENT: SWIPER
+──────────────────────────────────────────── */
+.buddies-main-content {
+    flex: 1;
+    max-width: 800px; /* Megakadályozzuk a túl nagy elnyúlást */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.swiper-section {
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* ─── Progress indicator ─── */
+.card-progress {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.3);
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    letter-spacing: 1px;
 }
 
 /* ─── Card stack ─── */
 .card-stack-container {
     position: relative;
-    width: 360px;
-    height: 520px;
+    width: 400px;
+    height: 580px;
     margin: 0 auto;
 }
 
@@ -122,10 +235,10 @@
 .card-peek {
     position: absolute;
     inset: 0;
-    border-radius: 20px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
-    transform: scale(0.94) translateY(12px);
+    border-radius: 30px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    transform: scale(0.92) translateY(20px);
     z-index: 0;
     pointer-events: none;
 }
@@ -134,188 +247,170 @@
 .swipe-card {
     position: absolute;
     inset: 0;
-    border-radius: 20px;
+    border-radius: 30px;
     overflow: hidden;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.12);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.55);
+    background: rgba(20, 20, 35, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6);
     cursor: grab;
     user-select: none;
     will-change: transform;
     z-index: 1;
-    transition: box-shadow 0.2s;
+    transition: box-shadow 0.3s ease;
 }
 
 .swipe-card:active {
     cursor: grabbing;
-    box-shadow: 0 30px 80px rgba(0,0,0,0.7);
 }
 
 /* ─── NOPE / LIKE overlays ─── */
 .swipe-label {
     position: absolute;
-    top: 28px;
+    top: 40px;
     z-index: 10;
-    font-size: 1.6rem;
+    font-size: 2rem;
     font-weight: 900;
-    letter-spacing: 3px;
-    padding: 6px 18px;
-    border-radius: 8px;
-    border-width: 3px;
-    border-style: solid;
+    letter-spacing: 4px;
+    padding: 10px 24px;
+    border-radius: 12px;
+    border: 4px solid;
     opacity: 0;
-    transform: rotate(-10deg);
     pointer-events: none;
-    transition: opacity 0.15s ease;
+    transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 .swipe-label.visible {
     opacity: 1;
+    transform: scale(1.1) rotate(10deg);
 }
 
 .swipe-label-nope {
-    left: 24px;
+    left: 30px;
     color: #ff3c50;
     border-color: #ff3c50;
-    background: rgba(255,60,80,0.12);
-    transform: rotate(-12deg);
+    background: rgba(255, 60, 80, 0.15);
+    transform: rotate(-15deg);
 }
 
 .swipe-label-like {
-    right: 24px;
+    right: 30px;
     color: #00f377;
     border-color: #00f377;
-    background: rgba(0,243,119,0.12);
-    transform: rotate(12deg);
+    background: rgba(0, 243, 119, 0.15);
+    transform: rotate(15deg);
 }
 
 /* ─── Card image & avatar ─── */
 .swipe-card-image {
     width: 100%;
-    height: 65%;
+    height: 70%;
     object-fit: cover;
-    display: block;
     pointer-events: none;
 }
 
 /* Placeholder when no profile picture */
 .swipe-card-avatar-placeholder {
     width: 100%;
-    height: 65%;
+    height: 70%;
     display: flex;
     align-items: center;
     justify-content: center;
-    position: relative;
-    overflow: hidden;
-}
-
-.swipe-card-avatar-placeholder::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse at 60% 30%, rgba(255,255,255,0.12) 0%, transparent 70%);
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
 }
 
 .swipe-card-initials {
-    font-size: 5.5rem;
+    font-size: 7rem;
     font-weight: 800;
-    color: rgba(255,255,255,0.9);
-    text-shadow: 0 4px 24px rgba(0,0,0,0.35);
-    letter-spacing: -2px;
-    line-height: 1;
-    position: relative;
-    z-index: 1;
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
 /* ─── Card info block ─── */
 .swipe-card-info {
-    padding: 1.2rem 1.3rem;
-    background: linear-gradient(to top, rgba(11,11,26,0.98) 70%, rgba(11,11,26,0.75));
-    height: 35%;
+    padding: 1.5rem 1.8rem;
+    background: linear-gradient(to top, rgba(11, 11, 26, 1) 40%, rgba(11, 11, 26, 0.7));
+    height: 30%;
     display: flex;
     flex-direction: column;
     justify-content: center;
 }
 
 .swipe-card-name {
-    font-size: 1.6rem;
-    font-weight: 700;
+    font-size: 2rem;
+    font-weight: 800;
     color: #fff;
-    margin-bottom: 0.3rem;
-    line-height: 1.1;
+    margin-bottom: 0.5rem;
+    line-height: 1;
 }
 
 .swipe-card-age {
-    font-size: 1.3rem;
-    color: rgba(255,255,255,0.65);
+    font-size: 1.6rem;
+    color: rgba(255, 255, 255, 0.5);
     font-weight: 400;
 }
 
 .swipe-card-meta {
     display: flex;
-    gap: 0.5rem;
-    align-items: center;
-    flex-wrap: wrap;
-    margin-bottom: 0.4rem;
+    gap: 0.6rem;
+    margin-bottom: 0.8rem;
 }
 
 .swipe-card-badge {
-    font-size: 0.72rem;
-    padding: 3px 10px;
-    border-radius: 20px;
-    background: rgba(188,19,254,0.18);
-    border: 1px solid rgba(188,19,254,0.4);
+    font-size: 0.75rem;
+    padding: 4px 12px;
+    border-radius: 30px;
+    background: rgba(188, 19, 254, 0.15);
+    border: 1px solid rgba(188, 19, 254, 0.3);
     color: var(--primary);
-    font-weight: 600;
+    font-weight: 700;
 }
 
 .swipe-card-badge.shared {
-    background: rgba(0,243,255,0.12);
-    border-color: rgba(0,243,255,0.35);
+    background: rgba(0, 243, 255, 0.1);
+    border-color: rgba(0, 243, 255, 0.3);
     color: var(--accent);
 }
 
 .swipe-card-bio {
-    font-size: 0.82rem;
-    color: rgba(255,255,255,0.5);
-    line-height: 1.4;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.5);
+    line-height: 1.5;
     overflow: hidden;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     line-clamp: 2;
     -webkit-box-orient: vertical;
-    margin-top: 0.15rem;
 }
 
 /* ─── Action buttons ─── */
 .swipe-actions {
     display: flex;
-    gap: 1.5rem;
-    margin-top: 2rem;
+    gap: 2rem;
+    margin-top: 2.5rem;
     justify-content: center;
-    align-items: center;
 }
 
 .swipe-btn {
-    width: 64px;
-    height: 64px;
+    width: 72px;
+    height: 72px;
     border-radius: 50%;
     border: none;
     cursor: pointer;
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.15s, box-shadow 0.2s, background 0.2s;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
 }
 
 .swipe-btn:hover:not(:disabled) {
-    transform: scale(1.12);
+    transform: scale(1.15) translateY(-5px);
 }
 
 .swipe-btn:active:not(:disabled) {
-    transform: scale(0.93);
+    transform: scale(0.9);
 }
 
 .swipe-btn:disabled {
@@ -324,42 +419,46 @@
 }
 
 .swipe-btn-dislike {
-    background: rgba(255, 60, 80, 0.12);
-    border: 2px solid rgba(255, 60, 80, 0.55);
+    background: rgba(255, 60, 80, 0.1);
+    border: 2px solid rgba(255, 60, 80, 0.4);
     color: #ff3c50;
 }
 
 .swipe-btn-dislike:hover:not(:disabled) {
-    background: rgba(255, 60, 80, 0.28);
-    box-shadow: 0 0 28px rgba(255, 60, 80, 0.55);
+    background: #ff3c50;
+    color: white;
+    box-shadow: 0 15px 35px rgba(255, 60, 80, 0.4);
 }
 
 .swipe-btn-like {
-    background: rgba(0, 243, 100, 0.12);
-    border: 2px solid rgba(0, 243, 100, 0.55);
+    background: rgba(0, 243, 100, 0.1);
+    border: 2px solid rgba(0, 243, 100, 0.4);
     color: #00f364;
 }
 
 .swipe-btn-like:hover:not(:disabled) {
-    background: rgba(0, 243, 100, 0.28);
-    box-shadow: 0 0 28px rgba(0, 243, 100, 0.5);
+    background: #00f364;
+    color: white;
+    box-shadow: 0 15px 35px rgba(0, 243, 100, 0.4);
 }
 
 .swipe-btn-refresh {
-    width: 48px;
-    height: 48px;
-    font-size: 1.1rem;
-    background: rgba(255,255,255,0.06);
-    border: 2px solid rgba(255,255,255,0.18);
-    color: rgba(255,255,255,0.6);
+    width: 56px;
+    height: 56px;
+    font-size: 1.4rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.6);
 }
 
 .swipe-btn-refresh:hover {
-    background: rgba(255,255,255,0.12);
-    color: rgba(255,255,255,0.9);
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
 }
 
-/* ─── Empty state ─── */
+/* ────────────────────────────────────────────
+   Empty state (moved from original position)
+──────────────────────────────────────────── */
 .buddies-empty {
     text-align: center;
     padding: 2rem 1.5rem;
@@ -377,31 +476,130 @@
 }
 
 .buddies-empty p {
-    color: rgba(255,255,255,0.5);
+    color: rgba(255, 255, 255, 0.5);
     font-size: 1rem;
 }
 
-/* ─── Loading ─── */
+/* ────────────────────────────────────────────
+   Loading
+──────────────────────────────────────────── */
 .buddies-loading {
+    padding: 6rem;
+    color: rgba(255, 255, 255, 0.3);
+    font-weight: 600;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    flex: 1;
     gap: 1rem;
-    padding: 4rem;
-    color: rgba(255,255,255,0.45);
 }
 
 .spinner {
-    width: 40px;
-    height: 40px;
-    border: 3px solid rgba(188,19,254,0.2);
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(188, 19, 254, 0.1);
     border-top-color: var(--primary);
     border-radius: 50%;
-    animation: spin 0.8s linear infinite;
+    animation: spin 1s cubic-bezier(0.5, 0, 0.5, 1) infinite;
 }
 
 @keyframes spin {
     to { transform: rotate(360deg); }
+}
+
+/* ────────────────────────────────────────────
+   RESPONSIVE DESIGN
+──────────────────────────────────────────── */
+
+@media (max-width: 1100px) {
+    .buddies-sidebar {
+        width: 260px;
+    }
+    .buddies-app-container {
+        padding: 0 1rem;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 900px) {
+    .buddies-page {
+        padding-top: 70px;
+        overflow-y: auto;
+    }
+    
+    .buddies-app-container {
+        flex-direction: column;
+        height: auto;
+        padding-bottom: 5rem;
+    }
+
+    .buddies-sidebar {
+        width: 100%;
+        height: auto;
+        margin-bottom: 2rem;
+    }
+
+    .buddies-sidebar-inner {
+        padding: 1rem;
+    }
+
+    .buddies-matches-grid {
+        display: flex;
+        overflow-x: auto;
+        gap: 1rem;
+        padding-bottom: 0.5rem;
+    }
+
+    .buddies-match-card {
+        min-width: 100px;
+        padding: 0.8rem 0.5rem;
+    }
+
+    .card-stack-container {
+        width: 90vw;
+        max-width: 360px;
+        height: 520px;
+    }
+
+    .swipe-card-name {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .buddies-header h1 {
+        font-size: 1.8rem;
+    }
+    .swipe-actions {
+        gap: 1.2rem;
+    }
+    .swipe-btn {
+        width: 60px;
+        height: 60px;
+        font-size: 1.4rem;
+    }
+    .swipe-btn-refresh {
+        width: 48px;
+        height: 48px;
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 400px) {
+    .card-stack-container {
+        height: 460px;
+    }
+    .swipe-card-info {
+        padding: 1rem;
+    }
+}
+
+/* Redundant but keeping the requested fix for 768px */
+@media (max-width: 768px) {
+    .buddies-page {
+        padding-top: 1.5rem;
+    }
 }
 
 /* ────────────────────────────────────────────
@@ -410,7 +608,7 @@
 .match-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.88);
+    background: rgba(0, 0, 0, 0.88);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -420,13 +618,18 @@
 }
 
 @keyframes matchOverlayIn {
-    from { opacity: 0; }
-    to   { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 .match-modal {
-    background: linear-gradient(145deg, rgba(30,10,50,0.95), rgba(10,25,40,0.95));
-    border: 1px solid rgba(188,19,254,0.45);
+    background: linear-gradient(145deg, rgba(30, 10, 50, 0.95), rgba(10, 25, 40, 0.95));
+    border: 1px solid rgba(188, 19, 254, 0.45);
     border-radius: 28px;
     padding: 3rem 2.5rem 2.5rem;
     text-align: center;
@@ -434,16 +637,23 @@
     width: 90%;
     animation: matchModalIn 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
     box-shadow:
-        0 0 80px rgba(188,19,254,0.35),
-        0 0 30px rgba(0,243,255,0.15),
-        0 30px 60px rgba(0,0,0,0.6);
+        0 0 80px rgba(188, 19, 254, 0.35),
+        0 0 30px rgba(0, 243, 255, 0.15),
+        0 30px 60px rgba(0, 0, 0, 0.6);
     position: relative;
     z-index: 10;
 }
 
 @keyframes matchModalIn {
-    from { transform: scale(0.55) translateY(40px); opacity: 0; }
-    to   { transform: scale(1) translateY(0);        opacity: 1; }
+    from {
+        transform: scale(0.55) translateY(40px);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+    }
 }
 
 /* Avatar ring */
@@ -465,14 +675,13 @@
     z-index: 2;
 }
 
-.buddies-match-avatar-placeholder {
+.match-modal .buddies-match-avatar-placeholder {
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 2.5rem;
     font-weight: 800;
-    color: rgba(255,255,255,0.92);
-    /* overrides img styles handled inline */
+    color: rgba(255, 255, 255, 0.92);
 }
 
 .match-ring {
@@ -481,14 +690,21 @@
     border-radius: 50%;
     border: 3px solid transparent;
     background: linear-gradient(#0b0b1a, #0b0b1a) padding-box,
-                linear-gradient(135deg, var(--primary), var(--accent), var(--primary)) border-box;
+        linear-gradient(135deg, var(--primary), var(--accent), var(--primary)) border-box;
     animation: ringPulse 1.8s ease-in-out infinite;
     z-index: 1;
 }
 
 @keyframes ringPulse {
-    0%, 100% { box-shadow: 0 0 12px rgba(188,19,254,0.6), 0 0 28px rgba(188,19,254,0.3); }
-    50%       { box-shadow: 0 0 24px rgba(0,243,255,0.8), 0 0 50px rgba(0,243,255,0.35); }
+
+    0%,
+    100% {
+        box-shadow: 0 0 12px rgba(188, 19, 254, 0.6), 0 0 28px rgba(188, 19, 254, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 0 24px rgba(0, 243, 255, 0.8), 0 0 50px rgba(0, 243, 255, 0.35);
+    }
 }
 
 .match-hearts {
@@ -499,8 +715,13 @@
 }
 
 @keyframes heartBeat {
-    from { transform: scale(1);    }
-    to   { transform: scale(1.18); }
+    from {
+        transform: scale(1);
+    }
+
+    to {
+        transform: scale(1.18);
+    }
 }
 
 .match-title {
@@ -516,7 +737,7 @@
 }
 
 .match-subtitle {
-    color: rgba(255,255,255,0.65);
+    color: rgba(255, 255, 255, 0.65);
     margin-bottom: 2rem;
     font-size: 0.98rem;
     line-height: 1.5;
@@ -538,18 +759,18 @@
     font-weight: 700;
     cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
-    box-shadow: 0 4px 24px rgba(188,19,254,0.45);
+    box-shadow: 0 4px 24px rgba(188, 19, 254, 0.45);
 }
 
 .btn-match-chat:hover {
     transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 8px 36px rgba(188,19,254,0.6);
+    box-shadow: 0 8px 36px rgba(188, 19, 254, 0.6);
 }
 
 .btn-match-continue {
     background: transparent;
-    border: 1px solid rgba(255,255,255,0.18);
-    color: rgba(255,255,255,0.55);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: rgba(255, 255, 255, 0.55);
     padding: 10px 24px;
     border-radius: 50px;
     font-size: 0.88rem;
@@ -558,9 +779,9 @@
 }
 
 .btn-match-continue:hover {
-    border-color: rgba(255,255,255,0.4);
-    color: rgba(255,255,255,0.88);
-    background: rgba(255,255,255,0.05);
+    border-color: rgba(255, 255, 255, 0.4);
+    color: rgba(255, 255, 255, 0.88);
+    background: rgba(255, 255, 255, 0.05);
 }
 
 /* ────────────────────────────────────────────
@@ -584,12 +805,29 @@
 }
 
 @keyframes confettiFall {
-    0%   { top: -20px; opacity: 1; transform: rotate(0deg) translateX(0px); }
-    80%  { opacity: 0.85; }
-    100% { top: 110vh;  opacity: 0; transform: rotate(var(--rotate, 360deg)) translateX(60px); }
+    0% {
+        top: -20px;
+        opacity: 1;
+        transform: rotate(0deg) translateX(0px);
+    }
+
+    80% {
+        opacity: 0.85;
+    }
+
+    100% {
+        top: 110vh;
+        opacity: 0;
+        transform: rotate(var(--rotate, 360deg)) translateX(60px);
+    }
 }
 
-/* ─── Responsive ─── */
+@media (max-width: 768px) {
+    .buddies-page {
+        padding-top: 1.5rem;
+    }
+}
+
 @media (max-width: 480px) {
     .card-stack-container {
         width: 310px;

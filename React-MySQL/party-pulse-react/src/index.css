@@ -7,7 +7,43 @@
     --bg: #0b0b1a;
     --card-bg: rgba(255, 255, 255, 0.08);
     --text: #ffffff;
+    
+    /* Glassmorphism & Neon */
+    --glass-bg: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --glass-blur: 16px;
+    --neon-purple: 0 0 20px rgba(188, 19, 254, 0.4);
+    --neon-blue: 0 0 20px rgba(0, 243, 255, 0.4);
+    --neon-pink: 0 0 20px rgba(255, 0, 222, 0.4);
 }
+
+.glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.06);
+    transform: translateY(-5px);
+}
+
+.glass-modal {
+    background: rgba(11, 11, 26, 0.8);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), var(--neon-purple);
+}
+
+.neon-glow-purple { box-shadow: var(--neon-purple); }
+.neon-glow-blue { box-shadow: var(--neon-blue); }
+.neon-glow-pink { box-shadow: var(--neon-pink); }
 
 * {
     box-sizing: border-box;
@@ -69,10 +105,18 @@ main {
 
 /* Global Utilities */
 .text-gradient {
-    background: linear-gradient(90deg, var(--accent), var(--secondary), var(--yellow));
+    background: linear-gradient(90deg, var(--accent), var(--secondary), var(--yellow), var(--accent));
+    background-size: 200% auto;
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    animation: shine 5s linear infinite;
+}
+
+@keyframes shine {
+    to {
+        background-position: 200% center;
+    }
 }
 
 .btn-pulse {
@@ -134,7 +178,7 @@ main {
 
 @media (max-width: 1024px) {
     .event-grid {
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     }
 
     .container {

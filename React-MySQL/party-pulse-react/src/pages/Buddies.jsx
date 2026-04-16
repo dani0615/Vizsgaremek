@@ -172,6 +172,7 @@ const Buddies = () => {
 
     const candidate = candidates[currentIndex];
     const hasMore = currentIndex < candidates.length;
+    const hasSidebar = !loading && allMatches.length > 0;
 
     if (!isAuthenticated) return null;
 
@@ -182,191 +183,202 @@ const Buddies = () => {
                 <p>Találj bulitársat a következő eseményedre!</p>
             </div>
 
-            {/* ── New-match banner ── */}
-            {!bannerDismissed && newMatches.length > 0 && (
-                <div className="buddies-new-match-banner">
-                    <div className="buddies-banner__avatars">
-                        {newMatches.slice(0, 3).map(m => (
-                            m.partner?.profilePictureBase64
-                                ? <img key={m.matchID} src={m.partner.profilePictureBase64} alt={m.partner.name} className="buddies-banner__avatar" style={{ marginLeft: newMatches.indexOf(m) > 0 ? '-10px' : 0 }} />
-                                : <div key={m.matchID} className="buddies-banner__avatar buddies-banner__avatar--placeholder" style={{ marginLeft: newMatches.indexOf(m) > 0 ? '-10px' : 0 }}>
-                                    {m.partner?.name?.charAt(0)?.toUpperCase()}
-                                  </div>
-                        ))}
-                    </div>
-                    <div className="buddies-banner__text">
-                        <div className="buddies-banner__label">💜 Új match{newMatches.length > 1 ? 'ek' : ''}!</div>
-                        <div className="buddies-banner__names">
-                            {newMatches.slice(0, 2).map(m => m.partner?.name).join(', ')}
-                            {newMatches.length > 2 && ` +${newMatches.length - 2} másik`}
-                        </div>
-                    </div>
-                    {newMatches.length === 1 && (
-                        <button
-                            className="match-toast__btn match-toast__btn--chat"
-                            style={{ flex: 'none', marginRight: '0.4rem' }}
-                            onClick={() => navigate(`/chat/${newMatches[0].matchID}`)}
-                        >
-                            💬
-                        </button>
-                    )}
-                    <button className="buddies-banner__close" onClick={() => setBannerDismissed(true)}>✕</button>
-                </div>
-            )}
-
-            {/* ── All Matches Section ── */}
-            {!loading && allMatches.length > 0 && (
-                <div className="buddies-matches-section">
-                    <h2 className="buddies-matches-title">Matcheid ({allMatches.length})</h2>
-                    <div className="buddies-matches-row">
-                        {allMatches.map(m => (
-                            <div key={m.matchID} className="buddies-match-item" onClick={() => navigate(`/chat/${m.matchID}`)}>
-                                {m.partner?.profilePictureBase64 ? (
-                                    <img src={m.partner.profilePictureBase64} alt={m.partner.name} className="buddies-match-avatar-small" />
-                                ) : (
-                                    <div className="buddies-match-avatar-small buddies-match-avatar-placeholder" style={{ background: `linear-gradient(135deg, ${generateAvatarColor(m.partner?.name)}, ${generateAvatarColor2(m.partner?.name)})` }}>
-                                        {getInitials(m.partner?.name)}
+            <div className="buddies-app-container" style={{ 
+                ...(hasSidebar ? { justifyContent: 'flex-start', marginLeft: '5%', gap: '6rem' } : {})
+            }}>
+                {/* ── Sidebar: All Matches ── */}
+                {hasSidebar && (
+                    <aside className="buddies-sidebar">
+                        <div className="buddies-sidebar-inner">
+                            <h2 className="buddies-sidebar-title">Matcheid ({allMatches.length})</h2>
+                            <div className="buddies-matches-grid">
+                                {allMatches.map(m => (
+                                    <div key={m.matchID} className="buddies-match-card" onClick={() => navigate(`/chat/${m.matchID}`)}>
+                                        <div className="buddies-match-avatar-wrapper">
+                                            {m.partner?.profilePictureBase64 ? (
+                                                <img src={m.partner.profilePictureBase64} alt={m.partner.name} className="buddies-match-avatar-img" />
+                                            ) : (
+                                                <div className="buddies-match-avatar-placeholder" style={{ background: `linear-gradient(135deg, ${generateAvatarColor(m.partner?.name)}, ${generateAvatarColor2(m.partner?.name)})` }}>
+                                                    {getInitials(m.partner?.name)}
+                                                </div>
+                                            )}
+                                        </div>
+                                        <span className="buddies-match-username">{m.partner?.name?.split(' ')[0]}</span>
                                     </div>
-                                )}
-                                <span className="buddies-match-name">{m.partner?.name?.split(' ')[0]}</span>
+                                ))}
                             </div>
-                        ))}
-                    </div>
-                </div>
-            )}
+                        </div>
+                    </aside>
+                )}
 
-            {loading && (
-                <div className="buddies-loading">
-                    <div className="spinner" />
-                    <span>Profilok betöltése...</span>
-                </div>
-            )}
-
-            {error && (
-                <div className="buddies-empty">
-                    <div className="empty-icon">⚠️</div>
-                    <p>{error}</p>
-                    <button className="swipe-btn swipe-btn-refresh" style={{ width: 'auto', borderRadius: '50px', padding: '10px 24px', marginTop: '1rem' }} onClick={fetchRecommendations}>Újrapróbálás</button>
-                </div>
-            )}
-
-            {!loading && !error && !hasMore && (
-                <div className="buddies-empty">
-                    <div className="empty-icon">🎭</div>
-                    <p>Nincs több ajánlás. Gyere vissza később!</p>
-                    <button
-                        className="swipe-btn-refresh"
-                        style={{ width: 'auto', height: 'auto', marginTop: '1.5rem', padding: '12px 28px', borderRadius: '50px', border: '2px solid rgba(255,255,255,0.25)', background: 'transparent', color: 'rgba(255,255,255,0.8)', cursor: 'pointer', fontSize: '0.95rem' }}
-                        onClick={fetchRecommendations}
-                    >
-                        ↺ Újratöltés
-                    </button>
-                </div>
-            )}
-
-            {!loading && !error && hasMore && candidate && (
-                <>
-                    {/* Progress dots */}
-                    <div className="card-progress">
-                        <span>{currentIndex + 1} / {candidates.length}</span>
-                    </div>
-
-                    <div className="card-stack-container">
-                        {/* Peek of next card behind */}
-                        {currentIndex + 1 < candidates.length && (
-                            <div className="card-peek" aria-hidden />
-                        )}
-
-                        <TinderCard
-                            key={cardKey}
-                            ref={cardRef}
-                            onSwipe={(dir) => onSwipe(dir, candidate)}
-                            onCardLeftScreen={onCardLeftScreen}
-                            preventSwipe={['up', 'down']}
-                            className="swipe-card"
-                            swipeRequirementType="position"
-                            swipeThreshold={80}
-                        >
-                            {/* NOPE / LIKE overlays */}
-                            <div
-                                className={`swipe-label swipe-label-nope ${swipeHint === 'left' ? 'visible' : ''}`}
-                            >NOPE</div>
-                            <div
-                                className={`swipe-label swipe-label-like ${swipeHint === 'right' ? 'visible' : ''}`}
-                            >LIKE 💜</div>
-
-                            {/* Avatar area */}
-                            {candidate.profilePictureBase64 ? (
-                                <img
-                                    src={candidate.profilePictureBase64}
-                                    alt={candidate.name}
-                                    className="swipe-card-image"
-                                    draggable={false}
-                                />
-                            ) : (
-                                <div
-                                    className="swipe-card-avatar-placeholder"
-                                    style={{
-                                        background: `linear-gradient(135deg, ${generateAvatarColor(candidate.name)}, ${generateAvatarColor2(candidate.name)})`
-                                    }}
+                {/* ── Main content: Banner + Swiper ── */}
+                <main className="buddies-main-content">
+                    {/* ── New-match banner ── */}
+                    {!bannerDismissed && newMatches.length > 0 && (
+                        <div className="buddies-new-match-banner">
+                            <div className="buddies-banner__avatars">
+                                {newMatches.slice(0, 3).map(m => (
+                                    m.partner?.profilePictureBase64
+                                        ? <img key={m.matchID} src={m.partner.profilePictureBase64} alt={m.partner.name} className="buddies-banner__avatar" style={{ marginLeft: newMatches.indexOf(m) > 0 ? '-10px' : 0 }} />
+                                        : <div key={m.matchID} className="buddies-banner__avatar buddies-banner__avatar--placeholder" style={{ marginLeft: newMatches.indexOf(m) > 0 ? '-10px' : 0 }}>
+                                            {m.partner?.name?.charAt(0)?.toUpperCase()}
+                                        </div>
+                                ))}
+                            </div>
+                            <div className="buddies-banner__text">
+                                <div className="buddies-banner__label">💜 Új match{newMatches.length > 1 ? 'ek' : ''}!</div>
+                                <div className="buddies-banner__names">
+                                    {newMatches.slice(0, 2).map(m => m.partner?.name).join(', ')}
+                                    {newMatches.length > 2 && ` +${newMatches.length - 2} másik`}
+                                </div>
+                            </div>
+                            {newMatches.length === 1 && (
+                                <button
+                                    className="match-toast__btn match-toast__btn--chat"
+                                    style={{ flex: 'none', marginRight: '0.4rem' }}
+                                    onClick={() => navigate(`/chat/${newMatches[0].matchID}`)}
                                 >
-                                    <span className="swipe-card-initials">
-                                        {getInitials(candidate.name)}
-                                    </span>
-                                </div>
+                                    💬
+                                </button>
                             )}
+                            <button className="buddies-banner__close" onClick={() => setBannerDismissed(true)}>✕</button>
+                        </div>
+                    )}
 
-                            <div className="swipe-card-info">
-                                <div className="swipe-card-name">
-                                    {candidate.name}
-                                    {getAge(candidate.birthDate) && (
-                                        <span className="swipe-card-age">, {getAge(candidate.birthDate)}</span>
-                                    )}
-                                </div>
-                                <div className="swipe-card-meta">
-                                    {candidate.lookingFor && (
-                                        <span className="swipe-card-badge">
-                                            {candidate.lookingFor === 'party_buddies' ? '🎉 Bulizni' :
-                                             candidate.lookingFor === 'friends' ? '👋 Barátok' : '🤝 Mindkettő'}
-                                        </span>
-                                    )}
-                                    {candidate.hasSharedEvent && (
-                                        <span className="swipe-card-badge shared">⚡ Közös buli</span>
-                                    )}
-                                </div>
-                                {candidate.bio && (
-                                    <p className="swipe-card-bio">{candidate.bio}</p>
-                                )}
+                    {loading && (
+                        <div className="buddies-loading">
+                            <div className="spinner" />
+                            <span>Profilok betöltése...</span>
+                        </div>
+                    )}
+
+                    {error && (
+                        <div className="buddies-empty">
+                            <div className="empty-icon">⚠️</div>
+                            <p>{error}</p>
+                            <button className="swipe-btn swipe-btn-refresh" style={{ width: 'auto', borderRadius: '50px', padding: '10px 24px', marginTop: '1rem' }} onClick={fetchRecommendations}>Újrapróbálás</button>
+                        </div>
+                    )}
+
+                    {!loading && !error && !hasMore && (
+                        <div className="buddies-empty">
+                            <div className="empty-icon">🎭</div>
+                            <p>Nincs több ajánlás. Gyere vissza később!</p>
+                            <button
+                                className="swipe-btn-refresh"
+                                style={{ width: 'auto', height: 'auto', marginTop: '1.5rem', padding: '12px 28px', borderRadius: '50px', border: '2px solid rgba(255,255,255,0.25)', background: 'transparent', color: 'rgba(255,255,255,0.8)', cursor: 'pointer', fontSize: '0.95rem' }}
+                                onClick={fetchRecommendations}
+                            >
+                                ↺ Újratöltés
+                            </button>
+                        </div>
+                    )}
+
+                    {!loading && !error && hasMore && candidate && (
+                        <div className="swiper-section">
+                            {/* Progress dots */}
+                            <div className="card-progress">
+                                <span>{currentIndex + 1} / {candidates.length}</span>
                             </div>
-                        </TinderCard>
-                    </div>
 
-                    <div className="swipe-actions">
-                        <button
-                            id="btn-dislike"
-                            className="swipe-btn swipe-btn-dislike"
-                            onClick={() => triggerSwipe('left')}
-                            disabled={swiping}
-                            title="Nem érdekel"
-                        >✕</button>
+                            <div className="card-stack-container">
+                                {/* Peek of next card behind */}
+                                {currentIndex + 1 < candidates.length && (
+                                    <div className="card-peek" aria-hidden />
+                                )}
 
-                        <button
-                            id="btn-refresh"
-                            className="swipe-btn swipe-btn-refresh"
-                            onClick={fetchRecommendations}
-                            title="Újratöltés"
-                        >↺</button>
+                                <TinderCard
+                                    key={cardKey}
+                                    ref={cardRef}
+                                    onSwipe={(dir) => onSwipe(dir, candidate)}
+                                    onCardLeftScreen={onCardLeftScreen}
+                                    preventSwipe={['up', 'down']}
+                                    className="swipe-card"
+                                    swipeRequirementType="position"
+                                    swipeThreshold={80}
+                                >
+                                    {/* NOPE / LIKE overlays */}
+                                    <div
+                                        className={`swipe-label swipe-label-nope ${swipeHint === 'left' ? 'visible' : ''}`}
+                                    >NOPE</div>
+                                    <div
+                                        className={`swipe-label swipe-label-like ${swipeHint === 'right' ? 'visible' : ''}`}
+                                    >LIKE 💜</div>
 
-                        <button
-                            id="btn-like"
-                            className="swipe-btn swipe-btn-like"
-                            onClick={() => triggerSwipe('right')}
-                            disabled={swiping}
-                            title="Tetszik!"
-                        >♥</button>
-                    </div>
-                </>
-            )}
+                                    {/* Avatar area */}
+                                    {candidate.profilePictureBase64 ? (
+                                        <img
+                                            src={candidate.profilePictureBase64}
+                                            alt={candidate.name}
+                                            className="swipe-card-image"
+                                            draggable={false}
+                                        />
+                                    ) : (
+                                        <div
+                                            className="swipe-card-avatar-placeholder"
+                                            style={{
+                                                background: `linear-gradient(135deg, ${generateAvatarColor(candidate.name)}, ${generateAvatarColor2(candidate.name)})`
+                                            }}
+                                        >
+                                            <span className="swipe-card-initials">
+                                                {getInitials(candidate.name)}
+                                            </span>
+                                        </div>
+                                    )}
+
+                                    <div className="swipe-card-info">
+                                        <div className="swipe-card-name">
+                                            {candidate.name}
+                                            {getAge(candidate.birthDate) && (
+                                                <span className="swipe-card-age">, {getAge(candidate.birthDate)}</span>
+                                            )}
+                                        </div>
+                                        <div className="swipe-card-meta">
+                                            {candidate.lookingFor && (
+                                                <span className="swipe-card-badge">
+                                                    {candidate.lookingFor === 'party_buddies' ? '🎉 Bulizni' :
+                                                        candidate.lookingFor === 'friends' ? '👋 Barátok' : '🤝 Mindkettő'}
+                                                </span>
+                                            )}
+                                            {candidate.hasSharedEvent && (
+                                                <span className="swipe-card-badge shared">⚡ Közös buli</span>
+                                            )}
+                                        </div>
+                                        {candidate.bio && (
+                                            <p className="swipe-card-bio">{candidate.bio}</p>
+                                        )}
+                                    </div>
+                                </TinderCard>
+                            </div>
+
+                            <div className="swipe-actions">
+                                <button
+                                    id="btn-dislike"
+                                    className="swipe-btn swipe-btn-dislike"
+                                    onClick={() => triggerSwipe('left')}
+                                    disabled={swiping}
+                                    title="Nem érdekel"
+                                >✕</button>
+
+                                <button
+                                    id="btn-refresh"
+                                    className="swipe-btn swipe-btn-refresh"
+                                    onClick={fetchRecommendations}
+                                    title="Újratöltés"
+                                >↺</button>
+
+                                <button
+                                    id="btn-like"
+                                    className="swipe-btn swipe-btn-like"
+                                    onClick={() => triggerSwipe('right')}
+                                    disabled={swiping}
+                                    title="Tetszik!"
+                                >♥</button>
+                            </div>
+                        </div>
+                    )}
+                </main>
+            </div>
 
             {/* MATCH Overlay */}
             {matchResult && (

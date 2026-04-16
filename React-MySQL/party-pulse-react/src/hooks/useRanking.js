@@ -20,7 +20,8 @@ export const useRanking = () => {
                 username: user.userName,
                 events: user.partyCount,
                 points: user.score,
-                profilePictureUrl: user.profilePictureUrl
+                profilePictureUrl: user.profilePictureUrl,
+                pinnedBadges: user.pinnedBadges || []
             }));
 
             setRanking(formattedRanking);

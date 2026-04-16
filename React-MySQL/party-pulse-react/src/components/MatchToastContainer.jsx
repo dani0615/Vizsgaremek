@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMatchNotifications } from '../context/MatchNotificationContext';
+import MatchCelebration3D from './3d/MatchCelebration3D';
 import '../css/MatchToast.css';
 
 const TOAST_DURATION = 5000; // ms before auto-dismiss
@@ -71,13 +72,28 @@ const SingleToast = ({ toast, onDismiss }) => {
 
 const MatchToastContainer = () => {
     const { toastQueue, dismissToast } = useMatchNotifications();
+    const [show3D, setShow3D] = useState(false);
+    const [lastToastId, setLastToastId] = useState(null);
+
+    useEffect(() => {
+        if (toastQueue.length > 0) {
+            const latest = toastQueue[toastQueue.length - 1];
+            if (latest.toastId !== lastToastId) {
+                setLastToastId(latest.toastId);
+                setShow3D(true);
+            }
+        }
+    }, [toastQueue, lastToastId]);
 
     return (
-        <div className="match-toast-container">
-            {toastQueue.map(toast => (
-                <SingleToast key={toast.toastId} toast={toast} onDismiss={dismissToast} />
-            ))}
-        </div>
+        <>
+            {show3D && <MatchCelebration3D onComplete={() => setShow3D(false)} />}
+            <div className="match-toast-container">
+                {toastQueue.map(toast => (
+                    <SingleToast key={toast.toastId} toast={toast} onDismiss={dismissToast} />
+                ))}
+            </div>
+        </>
     );
 };
 

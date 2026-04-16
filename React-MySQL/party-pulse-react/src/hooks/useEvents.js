@@ -58,6 +58,7 @@ export const useEvents = () => {
                     isFavorite: event.isFavorite ?? event.IsFavorite ?? false,
                     hasEnded: event.hasEnded ?? event.HasEnded ?? false,
                     isReviewed: event.isReviewed ?? event.IsReviewed ?? false,
+                    isFeatured: event.isFeatured ?? event.IsFeatured ?? false,
                 };
             });
 
