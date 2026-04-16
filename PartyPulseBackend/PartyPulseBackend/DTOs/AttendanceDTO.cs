@@ -1,4 +1,4 @@
-﻿namespace PartyPulseBackend.DTOs
+namespace PartyPulseBackend.DTOs
 {
     public class AttendedEventDTO
     {

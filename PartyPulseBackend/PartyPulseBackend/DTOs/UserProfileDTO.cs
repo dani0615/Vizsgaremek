@@ -1,4 +1,4 @@
-﻿namespace PartyPulseBackend.DTOs
+namespace PartyPulseBackend.DTOs
 {
     public class UserProfileDTO
     {
@@ -13,6 +13,7 @@
         public DateTime? BirthDate { get; set; }
         public string? LookingFor { get; set; }
         public DateTime LastModified { get; set; }
+        public List<BadgeDTO> Badges { get; set; } = new List<BadgeDTO>();
 
     }
 }

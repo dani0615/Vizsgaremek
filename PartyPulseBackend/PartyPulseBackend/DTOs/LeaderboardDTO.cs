@@ -1,4 +1,4 @@
-﻿namespace PartyPulseBackend.DTOs
+namespace PartyPulseBackend.DTOs
 {
     public class LeaderboardDTO
     {
@@ -8,5 +8,6 @@
         public int PartyCount { get; set; }
         public int Score { get; set; }
         public string? ProfilePictureUrl { get; set; }
+        public List<BadgeDTO> PinnedBadges { get; set; } = new();
     }
 }

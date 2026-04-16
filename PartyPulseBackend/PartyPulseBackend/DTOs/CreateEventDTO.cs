@@ -1,4 +1,4 @@
-﻿namespace PartyPulseBackend.DTOs
+namespace PartyPulseBackend.DTOs
 {
     public class CreateEventDTO
     {
@@ -13,5 +13,8 @@
         public bool IsPublic { get; set; } = true;
 
         public IFormFile? Image { get; set; }
+        public string? Latitude { get; set; }
+        public string? Longitude { get; set; }
+        public bool IsFeatured { get; set; } = false;
     }
 }
