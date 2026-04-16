@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PartyPulseBackend.Data;
@@ -6,7 +6,6 @@ using PartyPulseBackend.Hubs;
 using PartyPulseBackend.Models;
 using System.Security.Claims;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace PartyPulseBackend.Controllers
 {

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PartyPulseBackend.Data;
@@ -29,7 +29,7 @@ namespace PartyPulseBackend.Controllers
 
             int userId = int.Parse(userIdClaim);
 
-
+            
             var eventExists = await _context.Events.AnyAsync(e => e.EventID == eventId);
             if (!eventExists)
                 return NotFound("Az esemény nem található.");
@@ -40,7 +40,7 @@ namespace PartyPulseBackend.Controllers
 
             if (existing != null)
             {
-
+                
                 var user = await _context.Users.FindAsync(userId);
                 if (user != null)
                 {
@@ -99,7 +99,7 @@ namespace PartyPulseBackend.Controllers
             });
         }
 
-
+        
         // A bejelentkezett felhasználó összes bejelentett eseménye
         [HttpGet("MyEvents")]
         [Authorize]

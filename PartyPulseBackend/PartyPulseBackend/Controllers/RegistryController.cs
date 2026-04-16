@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PartyPulseBackend.Data;
 using PartyPulseBackend.DTOs;
@@ -19,11 +19,11 @@ namespace PartyPulseBackend.Controllers
             _context = context;
         }
 
-       
+
         [HttpPost]
         public async Task<IActionResult> Registry([FromBody] UserRegistrationDTO regModel)
         {
-            user newUser; 
+            User newUser;
 
             using (var transaction = await _context.Database.BeginTransactionAsync())
             {
@@ -35,7 +35,7 @@ namespace PartyPulseBackend.Controllers
                     if (await _context.Users.AnyAsync(u => u.Email == regModel.Email))
                         return BadRequest("Email cím már foglalt.");
 
-                    newUser = new user
+                    newUser = new User
                     {
                         Username = regModel.Username,
                         Email = regModel.Email,
@@ -45,8 +45,8 @@ namespace PartyPulseBackend.Controllers
                         Points = 0,
                         CreatedAt = DateTime.Now,
                         UpdatedAt = DateTime.Now,
-                        Gender=regModel.Gender,
-                        BirthDate = regModel.BirthDate,
+                        Gender = regModel.Gender,
+                        BirthDate = regModel.BirthDate.HasValue ? DateOnly.FromDateTime(regModel.BirthDate.Value) : null,
                         LookingFor = regModel.LookingFor,
                         DisplayName = regModel.DisplayName ?? regModel.Username
                     };
@@ -57,7 +57,7 @@ namespace PartyPulseBackend.Controllers
                     string salt = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 32);
                     string passwordHash = Program.CreateSHA256(regModel.Password + salt);
 
-                    var passwordEntry = new passwordsalt
+                    var passwordEntry = new Passwordsalt
                     {
                         UserID = newUser.UserID,
                         Salt = salt,
@@ -68,20 +68,25 @@ namespace PartyPulseBackend.Controllers
                     await _context.Passwordsalts.AddAsync(passwordEntry);
                     await _context.SaveChangesAsync();
 
-                    await transaction.CommitAsync(); 
+                    await transaction.CommitAsync();
                 }
                 catch (Exception ex)
                 {
-                   
+
                     await transaction.RollbackAsync();
                     return BadRequest($"Adatbázis hiba: {ex.Message}");
                 }
             }
 
-            
+
             try
             {
-                string confirmationLink = $"https://localhost:7234/api/Registry?felhasznalonev={newUser.Username}&email={newUser.Email}";
+                string origin = Request.Headers["Origin"].ToString();
+                if (string.IsNullOrEmpty(origin)) {
+                    origin = "http://localhost:5173"; // Default React dev server
+                }
+                string confirmationLink = $"{origin}/confirm-email?felhasznalonev={newUser.Username}&email={newUser.Email}";
+                
                 await Program.SendEmail(newUser.Email, "Regisztráció megerősítése",
                     $"Szia {newUser.Username}! Kattints ide a megerősítéshez: {confirmationLink}");
 
@@ -89,8 +94,8 @@ namespace PartyPulseBackend.Controllers
             }
             catch (Exception ex)
             {
-                
-                return Ok($"Sikeres regisztráció, de az email küldése sikertelen volt. Hiba: {ex.Message}");
+                var innerMessage = ex.InnerException != null ? ex.InnerException.Message : "";
+                return Ok($"Sikeres regisztráció, de az email küldése sikertelen volt. Hiba: {ex.Message} Bővebben: {innerMessage}");
             }
         }
         [HttpGet]
@@ -103,13 +108,13 @@ namespace PartyPulseBackend.Controllers
                 if (user == null)
                     return BadRequest("Érvénytelen adatok.");
 
-                if ((bool)user.IsActive)
+                if (user.IsActive == true)
                     return Ok("A fiók már korábban aktiválva lett.");
 
-                
+
                 user.IsActive = true;
                 user.IsVerified = true;
-                user.Role = "user"; 
+                user.Role = "user";
 
                 _context.Users.Update(user);
                 await _context.SaveChangesAsync();

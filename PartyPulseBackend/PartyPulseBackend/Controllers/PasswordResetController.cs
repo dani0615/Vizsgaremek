@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PartyPulseBackend.Data;
 using PartyPulseBackend.DTOs;
@@ -117,7 +117,7 @@ namespace PartyPulseBackend.Controllers
         {
             var secret = _config["JwtSettings:SecretKey"] ?? "FallbackSecretKeyForResetTokens";
             var payload = $"{email}:{currentHash}:{expiry}";
-
+            
             using var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(secret));
             var hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(payload));
             return Convert.ToBase64String(hash);

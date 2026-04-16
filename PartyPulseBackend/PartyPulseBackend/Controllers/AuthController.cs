@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using PartyPulseBackend.Data;
@@ -25,26 +25,26 @@ namespace PartyPulseBackend.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UserLoginDTO loginModel)
         {
-           
+
             var user = await _context.Users
-                .Include(u => u.passwordsalt)
-                .FirstOrDefaultAsync(u => u.Email == loginModel.Identifier || u.Username==loginModel.Identifier);
+                .Include(u => u.Passwordsalt)
+                .FirstOrDefaultAsync(u => u.Email == loginModel.Identifier || u.Username == loginModel.Identifier);
 
             if (user == null)
                 return Unauthorized("Hibás felhasználónév/email vagy jelszó.");
 
-           
+
             if (user.IsActive != true)
                 return BadRequest("Kérjük, előbb erősítse meg az email címét!");
 
-          
-            string salt = user.passwordsalt!.Salt;
+
+            string salt = user.Passwordsalt!.Salt;
             string computedHash = Program.CreateSHA256(loginModel.Password + salt);
 
-            if (computedHash != user.passwordsalt.PasswordHash)
+            if (computedHash != user.Passwordsalt.PasswordHash)
                 return Unauthorized("Hibás felhasználónév/email vagy jelszó.");
 
-          
+
             var token = GenerateJwtToken(user);
 
             return Ok(new
@@ -52,11 +52,15 @@ namespace PartyPulseBackend.Controllers
                 token = token,
                 userId = user.UserID,
                 username = user.Username,
-                role = user.Role
+                role = user.Role,
+                displayName = user.DisplayName,
+                profilePictureBase64 = user.ProfilePicture != null && user.ProfilePictureMime != null
+                    ? $"data:{user.ProfilePictureMime};base64,{Convert.ToBase64String(user.ProfilePicture)}"
+                    : null
             });
         }
 
-        private string GenerateJwtToken(Models.user user)
+        private string GenerateJwtToken(Models.User user)
         {
             var jwtSettings = _config.GetSection("JwtSettings");
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]!));
