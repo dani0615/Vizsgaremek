@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -8,7 +8,7 @@ namespace PartyPulseBackend.Models;
 
 [PrimaryKey("UserID", "BadgeID")]
 [Index("BadgeID", Name = "BadgeID")]
-public partial class userbadge
+public partial class UserBadge
 {
     [Key]
     [Column(TypeName = "int(11)")]
@@ -21,11 +21,9 @@ public partial class userbadge
     [Column(TypeName = "timestamp")]
     public DateTime AwardedAt { get; set; }
 
-    [ForeignKey("BadgeID")]
-    [InverseProperty("userbadges")]
-    public virtual badge Badge { get; set; } = null!;
+    public bool IsPinned { get; set; }
 
-    [ForeignKey("UserID")]
-    [InverseProperty("userbadges")]
-    public virtual user User { get; set; } = null!;
+    public virtual Badge Badge { get; set; } = null!;
+
+    public virtual User User { get; set; } = null!;
 }

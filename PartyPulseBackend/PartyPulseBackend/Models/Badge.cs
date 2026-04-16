@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace PartyPulseBackend.Models;
 
 [Index("Name", Name = "Name", IsUnique = true)]
-public partial class badge
+public partial class Badge
 {
     [Key]
     [Column(TypeName = "int(11)")]
@@ -22,10 +22,10 @@ public partial class badge
     [StringLength(512)]
     public string? IconUrl { get; set; }
 
+    [Column(TypeName = "json")]
     public string Criteria { get; set; } = null!;
 
     public bool? IsActive { get; set; }
 
-    [InverseProperty("Badge")]
-    public virtual ICollection<userbadge> userbadges { get; set; } = new List<userbadge>();
+    public virtual ICollection<UserBadge> Userbadges { get; set; } = new List<UserBadge>();
 }

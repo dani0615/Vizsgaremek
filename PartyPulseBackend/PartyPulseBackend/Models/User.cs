@@ -7,12 +7,11 @@ using Microsoft.EntityFrameworkCore;
 namespace PartyPulseBackend.Models;
 
 [Index("Email", Name = "Email", IsUnique = true)]
-[Index("Username", Name = "Username", IsUnique = true)]
-[Index("Email", Name = "idx_email")]
 [Index("LastActive", Name = "idx_lastactive")]
 [Index("Points", Name = "idx_points")]
-[Index("Username", Name = "idx_username")]
-public partial class user
+[Index("Username", Name = "idx_username", IsUnique = true)]
+[MySqlCollation("utf8mb4_unicode_ci")]
+public partial class User
 {
     [Key]
     [Column(TypeName = "int(11)")]
@@ -43,8 +42,7 @@ public partial class user
     [Column(TypeName = "enum('male','female','other','prefer_not_to_say')")]
     public string? Gender { get; set; }
 
-    [Column(TypeName = "date")]
-    public DateTime? BirthDate { get; set; }
+    public DateOnly? BirthDate { get; set; }
 
     [Column(TypeName = "enum('friends','party_buddies','both')")]
     public string? LookingFor { get; set; }
@@ -63,32 +61,31 @@ public partial class user
     public DateTime UpdatedAt { get; set; }
 
     [InverseProperty("User")]
-    public virtual ICollection<attendance> attendances { get; set; } = new List<attendance>();
+    public virtual ICollection<Attendance> Attendances { get; set; } = new List<Attendance>();
 
     [InverseProperty("Sender")]
-    public virtual ICollection<chatmessage> chatmessages { get; set; } = new List<chatmessage>();
+    public virtual ICollection<Chatmessage> Chatmessages { get; set; } = new List<Chatmessage>();
 
     [InverseProperty("User")]
-    public virtual ICollection<eventfavorite> eventfavorites { get; set; } = new List<eventfavorite>();
+    public virtual ICollection<Eventfavorite> Eventfavorites { get; set; } = new List<Eventfavorite>();
 
     [InverseProperty("Organizer")]
-    public virtual ICollection<@event> events { get; set; } = new List<@event>();
+    public virtual ICollection<Event> Events { get; set; } = new List<Event>();
 
     [InverseProperty("User1")]
-    public virtual ICollection<match> matchUser1s { get; set; } = new List<match>();
+    public virtual ICollection<Match> MatchUser1s { get; set; } = new List<Match>();
 
     [InverseProperty("User2")]
-    public virtual ICollection<match> matchUser2s { get; set; } = new List<match>();
+    public virtual ICollection<Match> MatchUser2s { get; set; } = new List<Match>();
 
     [InverseProperty("User")]
-    public virtual passwordsalt? passwordsalt { get; set; }
+    public virtual Passwordsalt? Passwordsalt { get; set; }
 
     [InverseProperty("User")]
-    public virtual ICollection<ranking> rankings { get; set; } = new List<ranking>();
+    public virtual ICollection<Ranking> Rankings { get; set; } = new List<Ranking>();
 
     [InverseProperty("User")]
-    public virtual ICollection<review> reviews { get; set; } = new List<review>();
+    public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
 
-    [InverseProperty("User")]
-    public virtual ICollection<userbadge> userbadges { get; set; } = new List<userbadge>();
+    public virtual ICollection<UserBadge> Userbadges { get; set; } = new List<UserBadge>();
 }

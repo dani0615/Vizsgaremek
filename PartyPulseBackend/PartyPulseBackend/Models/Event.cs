@@ -1,16 +1,16 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Geometries;
 
 namespace PartyPulseBackend.Models;
 
 [Index("OrganizerID", Name = "OrganizerID")]
-[Index("Title", "Description", Name = "ft_search")]
 [Index("EventDateTime", Name = "idx_datetime")]
 [Index("MusicStyle", Name = "idx_music")]
-public partial class @event
+public partial class Event
 {
     [Key]
     [Column(TypeName = "int(11)")]
@@ -24,6 +24,8 @@ public partial class @event
     [Column(TypeName = "datetime")]
     public DateTime EventDateTime { get; set; }
 
+    public Point Location { get; set; } = null!;
+
     [StringLength(255)]
     public string? LocationName { get; set; }
 
@@ -33,7 +35,7 @@ public partial class @event
     [StringLength(255)]
     public string? Address { get; set; }
 
-    [Precision(10)]
+    [Precision(10, 2)]
     public decimal? TicketPrice { get; set; }
 
     [Column(TypeName = "int(11)")]
@@ -49,20 +51,24 @@ public partial class @event
 
     [Column(TypeName = "timestamp")]
     public DateTime CreatedAt { get; set; }
-    public double? Latitude { get; set; }
 
-    public double? Longitude { get; set; }
+    [NotMapped]
+    public double Latitude { get; set; }
+    [NotMapped]
+    public double Longitude { get; set; }
+
+    public bool IsFeatured { get; set; } = false;
 
     [ForeignKey("OrganizerID")]
-    [InverseProperty("events")]
-    public virtual user Organizer { get; set; } = null!;
+    [InverseProperty("Events")]
+    public virtual User Organizer { get; set; } = null!;
 
     [InverseProperty("Event")]
-    public virtual ICollection<attendance> attendances { get; set; } = new List<attendance>();
+    public virtual ICollection<Attendance> Attendances { get; set; } = new List<Attendance>();
 
     [InverseProperty("Event")]
-    public virtual ICollection<eventfavorite> eventfavorites { get; set; } = new List<eventfavorite>();
+    public virtual ICollection<Eventfavorite> Eventfavorites { get; set; } = new List<Eventfavorite>();
 
     [InverseProperty("Event")]
-    public virtual ICollection<review> reviews { get; set; } = new List<review>();
+    public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
 }

@@ -8,7 +8,7 @@ namespace PartyPulseBackend.Models;
 
 [PrimaryKey("RankType", "Period", "Score", "UserID")]
 [Index("UserID", Name = "UserID")]
-public partial class ranking
+public partial class Ranking
 {
     [Key]
     [Column(TypeName = "int(11)")]
@@ -30,6 +30,6 @@ public partial class ranking
     public int? RankPos { get; set; }
 
     [ForeignKey("UserID")]
-    [InverseProperty("rankings")]
-    public virtual user User { get; set; } = null!;
+    [InverseProperty("Rankings")]
+    public virtual User User { get; set; } = null!;
 }

@@ -8,7 +8,7 @@ namespace PartyPulseBackend.Models;
 
 [PrimaryKey("UserID", "EventID")]
 [Index("EventID", Name = "EventID")]
-public partial class attendance
+public partial class Attendance
 {
     [Key]
     [Column(TypeName = "int(11)")]
@@ -31,10 +31,10 @@ public partial class attendance
     public string? Status { get; set; }
 
     [ForeignKey("EventID")]
-    [InverseProperty("attendances")]
-    public virtual @event Event { get; set; } = null!;
+    [InverseProperty("Attendances")]
+    public virtual Event Event { get; set; } = null!;
 
     [ForeignKey("UserID")]
-    [InverseProperty("attendances")]
-    public virtual user User { get; set; } = null!;
+    [InverseProperty("Attendances")]
+    public virtual User User { get; set; } = null!;
 }

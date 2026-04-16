@@ -6,11 +6,23 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PartyPulseBackend.Models;
 
-public partial class review
+[Index("EventID", Name = "EventID")]
+[Index("UserID", "EventID", Name = "uq_one_review_per_user", IsUnique = true)]
+[MySqlCollation("utf8mb4_unicode_ci")]
+public partial class Review
 {
     [Key]
     [Column(TypeName = "int(11)")]
     public int ReviewID { get; set; }
+
+    [Column(TypeName = "int(11)")]
+    public int EventID { get; set; }
+
+    [Column(TypeName = "int(11)")]
+    public int UserID { get; set; }
+
+    [Column(TypeName = "tinyint(4)")]
+    public sbyte Rating { get; set; }
 
     [Column(TypeName = "text")]
     public string? Comment { get; set; }
@@ -18,17 +30,11 @@ public partial class review
     [Column(TypeName = "timestamp")]
     public DateTime CreatedAt { get; set; }
 
-    [Column(TypeName = "int(11)")]
-    public int UserID { get; set; }
-
-    [Column(TypeName = "int(11)")]
-    public int EventID { get; set; }
-
     [ForeignKey("EventID")]
-    [InverseProperty("reviews")]
-    public virtual @event Event { get; set; } = null!;
+    [InverseProperty("Reviews")]
+    public virtual Event Event { get; set; } = null!;
 
     [ForeignKey("UserID")]
-    [InverseProperty("reviews")]
-    public virtual user User { get; set; } = null!;
+    [InverseProperty("Reviews")]
+    public virtual User User { get; set; } = null!;
 }

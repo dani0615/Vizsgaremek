@@ -9,7 +9,8 @@ namespace PartyPulseBackend.Models;
 [PrimaryKey("UserID", "EventID")]
 [Index("EventID", Name = "idx_event")]
 [Index("UserID", Name = "idx_user")]
-public partial class eventfavorite
+[MySqlCollation("utf8mb4_unicode_ci")]
+public partial class Eventfavorite
 {
     [Key]
     [Column(TypeName = "int(11)")]
@@ -23,10 +24,10 @@ public partial class eventfavorite
     public DateTime CreatedAt { get; set; }
 
     [ForeignKey("EventID")]
-    [InverseProperty("eventfavorites")]
-    public virtual @event Event { get; set; } = null!;
+    [InverseProperty("Eventfavorites")]
+    public virtual Event Event { get; set; } = null!;
 
     [ForeignKey("UserID")]
-    [InverseProperty("eventfavorites")]
-    public virtual user User { get; set; } = null!;
+    [InverseProperty("Eventfavorites")]
+    public virtual User User { get; set; } = null!;
 }

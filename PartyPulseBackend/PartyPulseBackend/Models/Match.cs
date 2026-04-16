@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -9,7 +9,8 @@ namespace PartyPulseBackend.Models;
 [Index("ChatRoomID", Name = "ChatRoomID", IsUnique = true)]
 [Index("User2ID", Name = "User2ID")]
 [Index("User1ID", "User2ID", Name = "uq_pair", IsUnique = true)]
-public partial class match
+[MySqlCollation("utf8mb4_unicode_ci")]
+public partial class Match
 {
     [Key]
     [Column(TypeName = "int(11)")]
@@ -28,17 +29,20 @@ public partial class match
     [Column(TypeName = "timestamp")]
     public DateTime? MatchedAt { get; set; }
 
-    [Required]
+    public bool User1Seen { get; set; }
+
+    public bool User2Seen { get; set; }
+
     public Guid? ChatRoomID { get; set; }
 
     [ForeignKey("User1ID")]
-    [InverseProperty("matchUser1s")]
-    public virtual user User1 { get; set; } = null!;
+    [InverseProperty("MatchUser1s")]
+    public virtual User User1 { get; set; } = null!;
 
     [ForeignKey("User2ID")]
-    [InverseProperty("matchUser2s")]
-    public virtual user User2 { get; set; } = null!;
+    [InverseProperty("MatchUser2s")]
+    public virtual User User2 { get; set; } = null!;
 
-    [InverseProperty("Room")]
-    public virtual ICollection<chatmessage> chatmessages { get; set; } = new List<chatmessage>();
+    [InverseProperty("Match")]
+    public virtual ICollection<Chatmessage> Chatmessages { get; set; } = new List<Chatmessage>();
 }

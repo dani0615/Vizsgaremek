@@ -6,33 +6,38 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PartyPulseBackend.Models;
 
-[Index("RoomID", "SentAt", Name = "idx_room_time")]
+[Index("MatchID", "SentAt", Name = "idx_match_time")]
 [Index("SenderID", Name = "idx_sender")]
 [Index("SentAt", Name = "idx_sentat")]
-public partial class chatmessage
+[MySqlCollation("utf8mb4_unicode_ci")]
+public partial class Chatmessage
 {
     [Key]
     [Column(TypeName = "bigint(20)")]
     public long MessageID { get; set; }
 
-    public Guid RoomID { get; set; }
+    [Column(TypeName = "int(11)")]
+    public int MatchID { get; set; }
 
     [Column(TypeName = "int(11)")]
     public int SenderID { get; set; }
 
     [Column(TypeName = "text")]
-    public string Message { get; set; } = null!;
+    public string EncryptedMessage { get; set; } = null!;
+
+    [StringLength(64)]
+    public string EncryptionIV { get; set; } = null!;
 
     [Column(TypeName = "timestamp")]
     public DateTime SentAt { get; set; }
 
     public bool? IsRead { get; set; }
 
-    [ForeignKey("RoomID")]
-    [InverseProperty("chatmessages")]
-    public virtual match Room { get; set; } = null!;
+    [ForeignKey("MatchID")]
+    [InverseProperty("Chatmessages")]
+    public virtual Match Match { get; set; } = null!;
 
     [ForeignKey("SenderID")]
-    [InverseProperty("chatmessages")]
-    public virtual user Sender { get; set; } = null!;
+    [InverseProperty("Chatmessages")]
+    public virtual User Sender { get; set; } = null!;
 }
