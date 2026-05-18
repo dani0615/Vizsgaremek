@@ -1,0 +1,460 @@
+/* ============================================================
+   CreateEventModal – Premium dark-mode stílusok
+   ============================================================ */
+
+/* ── Háttér (backdrop) ────────────────────────────────────── */
+.cem-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+
+/* ── Modal doboz ─────────────────────────────────────────── */
+.cem-modal {
+    background: rgba(11, 11, 26, 0.85);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    width: 100%;
+    max-width: 720px;
+    max-height: 92vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.7),
+        var(--neon-purple);
+    overflow: hidden;
+}
+
+/* ── Header ──────────────────────────────────────────────── */
+.cem-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px 28px 18px;
+    border-bottom: 1px solid rgba(188, 19, 254, 0.2);
+    background: rgba(188, 19, 254, 0.05);
+    flex-shrink: 0;
+}
+
+.cem-header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.cem-icon {
+    font-size: 1.8rem;
+    filter: drop-shadow(0 0 8px rgba(188, 19, 254, 0.6));
+}
+
+.cem-header h2 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #bc13fe, #00f3ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 0;
+}
+
+.cem-close-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+}
+
+.cem-close-btn:hover {
+    background: rgba(255, 70, 70, 0.2);
+    border-color: rgba(255, 70, 70, 0.5);
+    color: #ff6b6b;
+}
+
+/* ── Form és scroll terület ──────────────────────────────── */
+.cem-form {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+}
+
+.cem-scroll-area {
+    padding: 24px 28px;
+    overflow-y: auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(188, 19, 254, 0.4) transparent;
+}
+
+.cem-scroll-area::-webkit-scrollbar {
+    width: 6px;
+}
+
+.cem-scroll-area::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.cem-scroll-area::-webkit-scrollbar-thumb {
+    background: rgba(188, 19, 254, 0.4);
+    border-radius: 4px;
+}
+
+/* ── Row (2 oszlopos) ────────────────────────────────────── */
+.cem-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+/* ── Mezők ───────────────────────────────────────────────── */
+.cem-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.cem-field-full {
+    grid-column: 1 / -1;
+}
+
+.cem-field label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: rgba(188, 19, 254, 0.85);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.cem-field label i {
+    color: rgba(0, 243, 255, 0.7);
+    font-size: 0.75rem;
+}
+
+.cem-field .required {
+    color: #ff6b6b;
+    font-size: 0.85rem;
+}
+
+.cem-field input,
+.cem-field select,
+.cem-field textarea {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    color: #fff;
+    padding: 11px 14px;
+    font-size: 0.92rem;
+    font-family: inherit;
+    transition: border-color 0.25s, box-shadow 0.25s;
+    outline: none;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.cem-field input::placeholder,
+.cem-field textarea::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.cem-field input:focus,
+.cem-field select:focus,
+.cem-field textarea:focus {
+    border-color: rgba(188, 19, 254, 0.6);
+    box-shadow: 0 0 0 3px rgba(188, 19, 254, 0.12), 0 0 15px rgba(188, 19, 254, 0.1);
+}
+
+.cem-field select option {
+    background: #1a0a2e;
+    color: #fff;
+}
+
+.cem-field textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* ── Toggle kapcsoló ─────────────────────────────────────── */
+.cem-field-toggle {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 14px 16px;
+}
+
+.cem-toggle-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+}
+
+.cem-toggle-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.cem-toggle-info i {
+    font-size: 1rem;
+    color: rgba(0, 243, 255, 0.7);
+    width: 20px;
+    text-align: center;
+}
+
+.cem-toggle-info span {
+    font-size: 0.95rem;
+    color: #fff;
+    font-weight: 600;
+}
+
+.cem-toggle-hint {
+    font-size: 0.78rem !important;
+    color: rgba(255, 255, 255, 0.4) !important;
+    font-weight: 400 !important;
+}
+
+.cem-toggle-switch {
+    width: 48px;
+    height: 26px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 13px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s;
+    flex-shrink: 0;
+}
+
+.cem-toggle-switch.active {
+    background: linear-gradient(135deg, #bc13fe, #7b00d4);
+    border-color: #bc13fe;
+    box-shadow: 0 0 12px rgba(188, 19, 254, 0.4);
+}
+
+.cem-toggle-knob {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    transition: transform 0.3s;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.cem-toggle-switch.active .cem-toggle-knob {
+    transform: translateX(22px);
+}
+
+/* ── Kép feltöltés / dropzone ────────────────────────────── */
+.cem-dropzone {
+    border: 2px dashed rgba(188, 19, 254, 0.35);
+    border-radius: 14px;
+    min-height: 140px;
+    cursor: pointer;
+    transition: all 0.25s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    background: rgba(188, 19, 254, 0.03);
+}
+
+.cem-dropzone:hover {
+    border-color: rgba(188, 19, 254, 0.7);
+    background: rgba(188, 19, 254, 0.07);
+}
+
+.cem-dropzone-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 30px;
+    text-align: center;
+}
+
+.cem-dropzone-placeholder i {
+    font-size: 2.5rem;
+    color: rgba(188, 19, 254, 0.5);
+}
+
+.cem-dropzone-placeholder p {
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.cem-dropzone-placeholder span {
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 0.75rem;
+}
+
+.cem-image-preview {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    display: block;
+}
+
+.cem-image-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    opacity: 0;
+    transition: opacity 0.25s;
+    color: #fff;
+}
+
+.cem-dropzone.has-image:hover .cem-image-overlay {
+    opacity: 1;
+}
+
+.cem-image-overlay i {
+    font-size: 1.5rem;
+    color: #bc13fe;
+}
+
+.cem-image-overlay span {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+/* ── Értesítések ─────────────────────────────────────────── */
+.cem-alert {
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+}
+
+.cem-alert-error {
+    background: rgba(255, 70, 70, 0.12);
+    border: 1px solid rgba(255, 70, 70, 0.35);
+    color: #ff8a8a;
+}
+
+.cem-alert-success {
+    background: rgba(0, 200, 100, 0.12);
+    border: 1px solid rgba(0, 200, 100, 0.35);
+    color: #4dff9e;
+}
+
+/* ── Footer ──────────────────────────────────────────────── */
+.cem-footer {
+    padding: 18px 28px;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    background: rgba(0, 0, 0, 0.2);
+    flex-shrink: 0;
+}
+
+.cem-btn-cancel {
+    padding: 11px 24px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 0.92rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+}
+
+.cem-btn-cancel:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.cem-btn-submit {
+    padding: 11px 28px;
+    background: linear-gradient(135deg, #bc13fe, #7b00d4);
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.25s;
+    font-family: inherit;
+    box-shadow: 0 4px 20px rgba(188, 19, 254, 0.35);
+}
+
+.cem-btn-submit:hover:not(:disabled) {
+    box-shadow: 0 6px 28px rgba(188, 19, 254, 0.55);
+}
+
+.cem-btn-submit:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+/* ── Reszponzív ──────────────────────────────────────────── */
+@media (max-width: 600px) {
+    .cem-modal {
+        max-height: 100vh;
+        border-radius: 20px 20px 0 0;
+        align-self: flex-end;
+    }
+
+    .cem-backdrop {
+        align-items: flex-end;
+        padding: 0;
+    }
+
+    .cem-row {
+        grid-template-columns: 1fr;
+    }
+
+    .cem-header {
+        padding: 16px 20px;
+    }
+
+    .cem-scroll-area {
+        padding: 18px 20px;
+    }
+
+    .cem-footer {
+        padding: 14px 20px;
+    }
+}
