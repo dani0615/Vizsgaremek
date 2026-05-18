@@ -1,0 +1,112 @@
+.glass-select-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.glass-select-label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.glass-select-control {
+    background: rgba(11, 11, 26, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 12px 15px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    min-height: 48px;
+}
+
+.glass-select-control:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.glass-select-control.active {
+    border-color: var(--accent);
+    box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+    background: rgba(11, 11, 26, 0.8);
+}
+
+.glass-select-chevron {
+    font-size: 0.8rem;
+    opacity: 0.5;
+    transition: transform 0.3s ease;
+}
+
+.glass-select-chevron.rotate {
+    transform: rotate(180deg);
+}
+
+.glass-select-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    overflow: hidden;
+    padding: 8px !important;
+    background: rgba(18, 18, 35, 0.9) !important;
+}
+
+.glass-select-options-list {
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.glass-select-option {
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.glass-select-option:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    padding-left: 20px;
+}
+
+.glass-select-option.selected {
+    background: rgba(188, 19, 254, 0.15);
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.glass-select-option i {
+    font-size: 0.8rem;
+}
+
+/* Custom Scrollbar for the dropdown */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
